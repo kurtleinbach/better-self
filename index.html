@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="theme-color" content="#0d0d0d"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="description" content="Better Self — Strength Training, Nutrition & Activity Tracker"/>
+  <title>Better Self</title>
+  <link rel="manifest" href="manifest.json"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Syne:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg:#0d0d0d;--s1:#141414;--s2:#1c1c1c;--s3:#252525;--border:#2e2e2e;
+      --accent:#ff6b2b;--accent2:#ffb547;--blue:#3b82f6;--green:#22c55e;--red:#ef4444;
+      --text:#f5f5f0;--muted:#666;--muted2:#444;--nav-h:68px;--safe-b:env(safe-area-inset-bottom,0px);
+    }
+    *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+    html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;font-size:15px;overflow:hidden;}
+    #app{height:100dvh;display:flex;flex-direction:column;position:relative;overflow:hidden;}
+    #app::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:9998;}
+
+    .page{display:none;flex:1;overflow-y:auto;overflow-x:hidden;padding-bottom:calc(var(--nav-h) + var(--safe-b) + 16px);}
+    .page.active{display:block;}
+    .page::-webkit-scrollbar{width:3px;}
+    .page::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+
+    nav{height:var(--nav-h);background:rgba(13,13,13,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-around;padding-bottom:var(--safe-b);flex-shrink:0;z-index:100;position:relative;}
+    .nb{display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;color:var(--muted);transition:color 0.2s;padding:8px 10px;border:none;background:none;font-family:'Syne',sans-serif;}
+    .nb.active{color:var(--accent);}
+    .nb svg{width:20px;height:20px;stroke-width:1.8;}
+    .nb span{font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;}
+
+    .ph{padding:20px 18px 14px;position:sticky;top:0;background:rgba(13,13,13,0.93);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);z-index:10;border-bottom:1px solid var(--border);}
+    .pt{font-family:'Barlow Condensed',sans-serif;font-size:38px;font-weight:900;letter-spacing:0.06em;line-height:1;color:var(--text);}
+    .ps{font-size:12px;color:var(--muted);margin-top:3px;font-weight:400;}
+    .section-label{font-size:10px;text-transform:uppercase;letter-spacing:0.14em;color:var(--muted);font-weight:700;padding:18px 18px 10px;}
+
+    /* ===== ONBOARDING ===== */
+    #onboarding{position:fixed;inset:0;background:var(--bg);z-index:500;overflow-y:auto;padding-bottom:48px;display:none;}
+    #onboarding.show{display:block;}
+    .ob-hero{background:linear-gradient(145deg,#1a1208,#141414);border-bottom:1px solid #3a2510;padding:52px 24px 36px;text-align:center;position:relative;overflow:hidden;}
+    .ob-hero::before{content:'';position:absolute;top:-80px;left:50%;transform:translateX(-50%);width:320px;height:320px;background:radial-gradient(circle,rgba(255,107,43,0.18) 0%,transparent 65%);border-radius:50%;pointer-events:none;}
+    .ob-logo{font-family:'Barlow Condensed',sans-serif;font-size:56px;font-weight:900;letter-spacing:0.04em;color:var(--text);line-height:1;}
+    .ob-logo span{color:var(--accent);}
+    .ob-tagline{font-size:14px;color:var(--muted);margin-top:10px;}
+    .ob-body{padding:28px 18px 0;}
+    .ob-step-title{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;letter-spacing:0.04em;margin-bottom:6px;}
+    .ob-step-sub{font-size:13px;color:var(--muted);margin-bottom:22px;line-height:1.5;}
+    .eq-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px;}
+    .eq-item{background:var(--s1);border:2px solid var(--border);border-radius:14px;padding:15px 12px;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:10px;position:relative;}
+    .eq-item.selected{border-color:var(--accent);background:rgba(255,107,43,0.07);}
+    .eq-item:active{transform:scale(0.97);}
+    .eq-ico{font-size:24px;flex-shrink:0;}
+    .eq-info{flex:1;min-width:0;}
+    .eq-name{font-size:13px;font-weight:700;color:var(--text);}
+    .eq-desc{font-size:10px;color:var(--muted);margin-top:2px;}
+    .eq-check{position:absolute;top:8px;right:8px;width:18px;height:18px;border-radius:50%;background:var(--accent);display:none;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:700;}
+    .eq-item.selected .eq-check{display:flex;}
+    .ob-btn{width:100%;padding:18px;background:var(--accent);color:#fff;border:none;border-radius:14px;font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;letter-spacing:0.08em;cursor:pointer;}
+    .ob-btn:active{opacity:0.9;transform:scale(0.98);}
+    .ob-note{font-size:11px;color:var(--muted);text-align:center;margin-top:12px;}
+
+    /* ===== HOME ===== */
+    .hero{margin:16px 18px 0;background:linear-gradient(145deg,#1a1208,#141414);border:1px solid #3a2510;border-radius:20px;padding:22px;position:relative;overflow:hidden;}
+    .hero::before{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;background:radial-gradient(circle,rgba(255,107,43,0.18) 0%,transparent 65%);border-radius:50%;}
+    .hero-label{font-size:11px;text-transform:uppercase;letter-spacing:0.14em;color:var(--accent);font-weight:700;margin-bottom:4px;}
+    .hero-name{font-family:'Barlow Condensed',sans-serif;font-size:44px;font-weight:900;letter-spacing:0.04em;line-height:1;}
+    .hero-sub{font-size:13px;color:var(--muted);margin-top:8px;}
+    .streak-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(255,107,43,0.12);border:1px solid rgba(255,107,43,0.25);border-radius:20px;padding:6px 12px;margin-top:10px;}
+    .streak-pill span:first-child{font-size:18px;}
+    .streak-pill strong{font-family:'Barlow Condensed',sans-serif;font-size:22px;color:var(--accent);line-height:1;}
+    .streak-pill em{font-size:12px;color:var(--muted);font-style:normal;}
+    .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:12px 18px 0;}
+    .sc{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:14px 8px;text-align:center;}
+    .sv{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:700;color:var(--text);line-height:1;}
+    .sl{font-size:9px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-top:3px;font-weight:700;}
+    .qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 18px;}
+    .qa{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:16px;cursor:pointer;text-align:left;transition:all 0.15s;display:flex;flex-direction:column;gap:6px;}
+    .qa:active{background:var(--s2);transform:scale(0.97);}
+    .qa-ico{font-size:24px;line-height:1;}
+    .qa-lbl{font-size:14px;font-weight:700;}
+    .qa-sub{font-size:11px;color:var(--muted);}
+    .recent-list{padding:0 18px;display:flex;flex-direction:column;gap:8px;}
+    .wc{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;}
+    .wc-left{display:flex;flex-direction:column;gap:3px;}
+    .wc-name{font-weight:700;font-size:14px;}
+    .wc-meta{font-size:11px;color:var(--muted);}
+    .wc-badge{font-family:'Barlow Condensed',sans-serif;font-size:22px;color:var(--accent);font-weight:700;}
+    .steps-card{margin:0 18px;background:var(--s1);border:1px solid var(--border);border-radius:16px;padding:18px;}
+    .steps-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;}
+    .steps-num{font-family:'Barlow Condensed',sans-serif;font-size:48px;font-weight:900;color:var(--text);line-height:1;}
+    .steps-goal{font-size:12px;color:var(--muted);margin-top:2px;}
+    .steps-pct{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:700;color:var(--accent);}
+    .progress-bar{height:8px;background:var(--s3);border-radius:4px;overflow:hidden;}
+    .progress-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width 0.6s cubic-bezier(0.34,1.56,0.64,1);}
+    .steps-row{display:flex;gap:8px;margin-top:12px;}
+    .step-add-btn{flex:1;padding:10px;background:var(--s2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'Syne',sans-serif;font-size:13px;font-weight:700;cursor:pointer;}
+    .step-add-btn:active{background:var(--s3);}
+
+    /* ===== EXERCISES ===== */
+    .tabs{display:flex;gap:6px;padding:12px 18px;}
+    .tab{flex:1;padding:9px 4px;border-radius:9px;border:1px solid var(--border);background:none;color:var(--muted);font-family:'Syne',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;cursor:pointer;transition:all 0.15s;}
+    .tab.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+    .ex-filter-note{padding:4px 18px 8px;font-size:11px;color:var(--muted);display:flex;align-items:center;gap:6px;}
+    .ex-grid{display:flex;flex-direction:column;gap:8px;padding:0 18px;}
+    .ex-item{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:14px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all 0.15s;}
+    .ex-item:active{background:var(--s2);}
+    .ex-item.unavail{opacity:0.35;cursor:default;}
+    .ex-ico{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+    .ico-str{background:rgba(255,107,43,0.12);}
+    .ico-acc{background:rgba(59,130,246,0.12);}
+    .ico-iso{background:rgba(34,197,94,0.12);}
+    .ex-body{flex:1;}
+    .ex-name{font-weight:700;font-size:14px;}
+    .ex-detail{font-size:11px;color:var(--muted);margin-top:2px;}
+    .ex-tag{display:inline-block;font-size:9px;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent);font-weight:700;margin-top:4px;background:rgba(255,107,43,0.1);border-radius:4px;padding:2px 6px;}
+    .ex-tag.blue{color:var(--blue);background:rgba(59,130,246,0.1);}
+    .ex-tag.green{color:var(--green);background:rgba(34,197,94,0.1);}
+    .ex-tag.grey{color:var(--muted);background:var(--s2);}
+    .ex-divider{padding:14px 0 6px;font-size:10px;text-transform:uppercase;letter-spacing:0.12em;color:var(--muted2);font-weight:700;}
+
+    /* ===== LOG ===== */
+    .log-cta{margin:14px 18px;display:flex;gap:8px;}
+    .btn-full{flex:1;padding:16px;background:var(--accent);color:#fff;border:none;border-radius:13px;font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;letter-spacing:0.08em;cursor:pointer;transition:all 0.15s;}
+    .btn-full:active{transform:scale(0.98);opacity:0.9;}
+    .log-list{padding:0 18px;display:flex;flex-direction:column;gap:8px;}
+    .le{background:var(--s1);border:1px solid var(--border);border-radius:14px;overflow:hidden;}
+    .le-hdr{padding:14px 16px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;}
+    .le-title{font-weight:700;font-size:14px;}
+    .le-date{font-size:11px;color:var(--muted);margin-top:2px;}
+    .le-tag{font-family:'Barlow Condensed',sans-serif;font-size:16px;color:var(--accent);font-weight:700;}
+    .le-body{border-top:1px solid var(--border);padding:12px 16px;display:none;}
+    .le-body.open{display:block;}
+    .le-row{display:flex;gap:10px;font-size:12px;color:var(--muted);padding:4px 0;border-bottom:1px solid var(--s2);}
+    .le-row:last-child{border-bottom:none;}
+    .le-row strong{color:var(--text);font-weight:700;min-width:90px;}
+
+    /* ===== PROGRESS ===== */
+    .prog-content{padding:12px 18px;}
+    .prog-big{background:var(--s1);border:1px solid var(--border);border-radius:16px;padding:18px;margin-bottom:10px;display:grid;grid-template-columns:1fr 1fr;gap:0;}
+    .pb-item{padding:0 12px;}
+    .pb-item:first-child{padding-left:0;border-right:1px solid var(--border);}
+    .pb-num{font-family:'Barlow Condensed',sans-serif;font-size:48px;font-weight:900;color:var(--text);line-height:1;}
+    .pb-label{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-top:2px;}
+    .pb-delta{font-size:12px;color:var(--green);margin-top:4px;}
+    .chart-card{background:var(--s1);border:1px solid var(--border);border-radius:16px;padding:18px;margin-bottom:10px;}
+    .ct{font-size:10px;text-transform:uppercase;letter-spacing:0.12em;color:var(--muted);font-weight:700;margin-bottom:14px;}
+    canvas{width:100%;display:block;}
+    .pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
+    .pr-card{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:14px;}
+    .pr-ex{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;font-weight:700;margin-bottom:6px;}
+    .pr-val{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;color:var(--accent);line-height:1;}
+    .pr-unit{font-size:11px;color:var(--muted);}
+
+    /* ===== MEALS ===== */
+    .meal-macros{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:12px 18px 0;}
+    .macro-card{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:14px 8px;text-align:center;}
+    .macro-val{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:700;line-height:1;}
+    .macro-val.cal{color:var(--accent2);}
+    .macro-val.pro{color:var(--blue);}
+    .macro-val.carb{color:var(--green);}
+    .macro-val.fat{color:#f97316;}
+    .macro-label{font-size:9px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);font-weight:700;margin-top:3px;}
+    .macro-bar-row{display:flex;gap:4px;padding:10px 18px 0;}
+    .macro-seg{height:6px;border-radius:3px;}
+    .macro-seg.pro{background:var(--blue);}
+    .macro-seg.carb{background:var(--green);}
+    .macro-seg.fat{background:#f97316;}
+    .meal-sections{padding:0 18px;display:flex;flex-direction:column;gap:10px;}
+    .meal-section{background:var(--s1);border:1px solid var(--border);border-radius:16px;overflow:hidden;}
+    .ms-hdr{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;cursor:pointer;}
+    .ms-title{font-weight:700;font-size:14px;display:flex;align-items:center;gap:8px;}
+    .ms-ico{font-size:18px;}
+    .ms-cals{font-family:'Barlow Condensed',sans-serif;font-size:18px;color:var(--accent2);font-weight:700;}
+    .ms-body{border-top:1px solid var(--border);padding:8px 0;display:none;}
+    .food-item{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;}
+    .fi-name{font-size:14px;font-weight:500;}
+    .fi-detail{font-size:11px;color:var(--muted);margin-top:2px;}
+    .fi-cal{font-family:'Barlow Condensed',sans-serif;font-size:18px;color:var(--muted);font-weight:700;}
+    .add-food-row{padding:10px 16px;border-top:1px solid var(--s2);}
+    .add-food-input-row{display:flex;gap:8px;}
+    .fi-input{flex:1;background:var(--s2);border:1px solid var(--border);border-radius:9px;padding:10px 12px;color:var(--text);font-family:'Syne',sans-serif;font-size:13px;}
+    .fi-input:focus{outline:none;border-color:var(--accent);}
+    .fi-input-sm{width:66px;background:var(--s2);border:1px solid var(--border);border-radius:9px;padding:10px 6px;color:var(--text);font-family:'Syne',sans-serif;font-size:13px;text-align:center;}
+    .fi-input-sm:focus{outline:none;border-color:var(--accent);}
+    .fi-add-btn{padding:10px 16px;background:var(--accent);color:#fff;border:none;border-radius:9px;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;cursor:pointer;}
+
+    /* ===== SETTINGS ===== */
+    .settings-content{padding:12px 18px 24px;}
+    .settings-section{background:var(--s1);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:14px;}
+    .settings-section-title{padding:14px 16px 10px;font-size:10px;text-transform:uppercase;letter-spacing:0.14em;color:var(--muted);font-weight:700;border-bottom:1px solid var(--border);}
+    .eq-setting-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:14px 16px;}
+    .eq-s-item{background:var(--s2);border:2px solid var(--border);border-radius:12px;padding:13px 11px;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:9px;}
+    .eq-s-item.selected{border-color:var(--accent);background:rgba(255,107,43,0.07);}
+    .eq-s-item:active{transform:scale(0.97);}
+    .eq-s-ico{font-size:20px;}
+    .eq-s-name{font-size:12px;font-weight:700;flex:1;}
+    .eq-s-check{width:16px;height:16px;border-radius:50%;background:var(--accent);display:none;align-items:center;justify-content:center;flex-shrink:0;font-size:9px;color:#fff;font-weight:700;}
+    .eq-s-item.selected .eq-s-check{display:flex;}
+    .settings-row{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--s2);}
+    .settings-row:last-child{border-bottom:none;}
+    .settings-row-label{font-size:14px;font-weight:500;}
+    .settings-row-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+    .settings-input{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-family:'Syne',sans-serif;font-size:14px;width:90px;text-align:center;}
+    .settings-input:focus{outline:none;border-color:var(--accent);}
+    .save-btn{margin:0 16px 14px;width:calc(100% - 32px);padding:13px;background:rgba(255,107,43,0.08);color:var(--accent);border:1px solid rgba(255,107,43,0.25);border-radius:10px;font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;letter-spacing:0.06em;cursor:pointer;}
+    .save-btn:active{background:rgba(255,107,43,0.15);}
+    .danger-btn{margin:0 16px 14px;width:calc(100% - 32px);padding:13px;background:rgba(239,68,68,0.08);color:var(--red);border:1px solid rgba(239,68,68,0.25);border-radius:10px;font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;letter-spacing:0.06em;cursor:pointer;}
+    .settings-footer{text-align:center;font-size:11px;color:var(--muted);padding:4px 0;}
+
+    /* ===== WORKOUT MODAL ===== */
+    .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:200;display:none;align-items:flex-end;}
+    .overlay.open{display:flex;}
+    .modal{width:100%;max-height:90dvh;background:var(--s1);border-top:1px solid var(--border);border-radius:22px 22px 0 0;overflow-y:auto;padding-bottom:calc(var(--safe-b) + 16px);animation:slideUp 0.3s cubic-bezier(0.34,1.56,0.64,1);}
+    @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+    .modal::-webkit-scrollbar{width:3px;}
+    .modal::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+    .mhandle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:12px auto 0;}
+    .mhdr{padding:18px 18px 0;display:flex;justify-content:space-between;align-items:center;}
+    .mtitle{font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:900;letter-spacing:0.05em;}
+    .mclose{width:34px;height:34px;border-radius:50%;border:1px solid var(--border);background:none;color:var(--muted);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+    .timer-disp{text-align:center;padding:20px 18px 12px;}
+    .timer-num{font-family:'Barlow Condensed',sans-serif;font-size:68px;font-weight:900;color:var(--accent);line-height:1;letter-spacing:0.04em;}
+    .timer-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.12em;margin-top:2px;font-weight:700;}
+    .timer-ctrls{display:flex;gap:8px;padding:0 18px 18px;}
+    .btn-p{flex:1;padding:15px;background:var(--accent);color:#fff;border:none;border-radius:12px;font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;letter-spacing:0.06em;cursor:pointer;}
+    .btn-d{padding:15px;background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.25);border-radius:12px;font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;letter-spacing:0.06em;cursor:pointer;}
+    .slbl{padding:0 18px 10px;font-size:10px;text-transform:uppercase;letter-spacing:0.14em;color:var(--muted);font-weight:700;}
+    .set-hdrs{display:grid;grid-template-columns:36px 1fr 1fr auto;gap:8px;padding:0 18px 6px;}
+    .sh{font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);text-align:center;font-weight:700;}
+    .set-logger{padding:0 18px 12px;display:flex;flex-direction:column;gap:8px;}
+    .set-row{display:grid;grid-template-columns:36px 1fr 1fr auto;gap:8px;align-items:center;}
+    .set-n{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:var(--muted2);text-align:center;}
+    .set-inp{background:var(--s2);border:1px solid var(--border);border-radius:9px;padding:12px 8px;color:var(--text);font-family:'Syne',sans-serif;font-size:16px;text-align:center;width:100%;}
+    .set-inp:focus{outline:none;border-color:var(--accent);}
+    .set-ck{width:34px;height:34px;border-radius:50%;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all 0.15s;}
+    .set-ck.done{background:var(--green);border-color:var(--green);color:#fff;}
+    .add-set-wrap{padding:0 18px;margin-bottom:8px;}
+    .add-set{width:100%;padding:12px;border:1px dashed var(--border);border-radius:9px;background:none;color:var(--muted);font-family:'Syne',sans-serif;font-size:13px;font-weight:700;cursor:pointer;}
+    .add-set:active{background:var(--s2);}
+
+    /* ===== FEEDBACK ===== */
+    .feedback-fab{position:fixed;bottom:calc(var(--nav-h) + var(--safe-b) + 14px);right:16px;width:48px;height:48px;border-radius:50%;background:var(--s2);border:1px solid var(--border);color:var(--muted);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:90;box-shadow:0 4px 20px rgba(0,0,0,0.4);transition:all 0.2s;}
+    .feedback-fab:active{transform:scale(0.92);}
+    .feedback-fab.has-notes{border-color:var(--accent);color:var(--accent);background:rgba(255,107,43,0.08);}
+    .fb-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:300;display:none;align-items:flex-end;}
+    .fb-overlay.open{display:flex;}
+    .fb-sheet{width:100%;max-height:88dvh;background:var(--s1);border-top:1px solid var(--border);border-radius:22px 22px 0 0;display:flex;flex-direction:column;padding-bottom:calc(var(--safe-b) + 16px);animation:slideUp 0.3s cubic-bezier(0.34,1.56,0.64,1);}
+    .fb-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:12px auto 0;flex-shrink:0;}
+    .fb-hdr{padding:16px 18px 12px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;border-bottom:1px solid var(--border);}
+    .fb-title{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:900;letter-spacing:0.05em;}
+    .fb-title span{color:var(--accent);}
+    .fb-close{width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:none;color:var(--muted);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+    .fb-how{padding:12px 18px;background:rgba(255,107,43,0.05);border-bottom:1px solid var(--border);font-size:12px;color:var(--muted);line-height:1.5;flex-shrink:0;}
+    .fb-how strong{color:var(--accent2);font-weight:700;}
+    .fb-notes-list{flex:1;overflow-y:auto;padding:10px 18px;}
+    .fb-notes-list::-webkit-scrollbar{width:3px;}
+    .fb-notes-list::-webkit-scrollbar-thumb{background:var(--border);}
+    .fb-empty{padding:24px 0;text-align:center;color:var(--muted);font-size:13px;}
+    .fb-note-item{background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;gap:10px;align-items:flex-start;}
+    .fb-note-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);flex-shrink:0;margin-top:5px;}
+    .fb-note-dot.bug{background:var(--red);}
+    .fb-note-dot.idea{background:var(--blue);}
+    .fb-note-body{flex:1;min-width:0;}
+    .fb-note-text{font-size:13px;color:var(--text);line-height:1.45;}
+    .fb-note-meta{font-size:10px;color:var(--muted);margin-top:4px;display:flex;gap:8px;align-items:center;}
+    .fb-note-tag{font-size:9px;text-transform:uppercase;letter-spacing:0.1em;font-weight:700;padding:2px 6px;border-radius:4px;}
+    .fb-note-tag.feature{color:var(--accent);background:rgba(255,107,43,0.12);}
+    .fb-note-tag.bug{color:var(--red);background:rgba(239,68,68,0.1);}
+    .fb-note-tag.idea{color:var(--blue);background:rgba(59,130,246,0.1);}
+    .fb-note-del{background:none;border:none;color:var(--muted2);font-size:14px;cursor:pointer;padding:2px 4px;line-height:1;flex-shrink:0;}
+    .fb-input-area{padding:12px 18px;border-top:1px solid var(--border);flex-shrink:0;}
+    .fb-type-row{display:flex;gap:6px;margin-bottom:8px;}
+    .fb-type-btn{flex:1;padding:7px 4px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);font-family:'Syne',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;cursor:pointer;transition:all 0.15s;}
+    .fb-type-btn.active-feature{background:rgba(255,107,43,0.12);border-color:var(--accent);color:var(--accent);}
+    .fb-type-btn.active-bug{background:rgba(239,68,68,0.1);border-color:var(--red);color:var(--red);}
+    .fb-type-btn.active-idea{background:rgba(59,130,246,0.1);border-color:var(--blue);color:var(--blue);}
+    .fb-row{display:flex;gap:8px;}
+    .fb-textarea{flex:1;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:11px 13px;color:var(--text);font-family:'Syne',sans-serif;font-size:13px;resize:none;height:48px;line-height:1.4;}
+    .fb-textarea:focus{outline:none;border-color:var(--accent);}
+    .fb-submit{padding:0 18px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;cursor:pointer;flex-shrink:0;}
+    .fb-submit:active{opacity:0.85;}
+    .fb-export-row{display:flex;gap:8px;padding:0 18px 4px;flex-shrink:0;}
+    .fb-export-btn{flex:1;padding:11px;background:var(--s2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:0.05em;cursor:pointer;transition:all 0.15s;}
+    .fb-export-btn:active{background:var(--s3);}
+    .fb-export-btn.primary{background:rgba(255,107,43,0.1);border-color:rgba(255,107,43,0.3);color:var(--accent);}
+
+    /* Install */
+    .install-bar{margin:12px 18px 0;background:linear-gradient(135deg,rgba(255,107,43,0.1),rgba(255,107,43,0.04));border:1px solid rgba(255,107,43,0.2);border-radius:14px;padding:13px 15px;display:flex;align-items:center;gap:10px;}
+    .install-bar.hidden{display:none;}
+    .ib-text{flex:1;}
+    .ib-title{font-size:13px;font-weight:700;}
+    .ib-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+    .ib-btn{padding:8px 16px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;cursor:pointer;flex-shrink:0;}
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ONBOARDING -->
+  <div id="onboarding">
+    <div class="ob-hero">
+      <div class="ob-logo">Better <span>Self</span></div>
+      <div class="ob-tagline">Your personal strength &amp; wellness tracker</div>
+    </div>
+    <div class="ob-body">
+      <div class="ob-step-title">What's in your home gym?</div>
+      <div class="ob-step-sub">Select all the equipment you have access to. Better Self will filter your exercises and suggest workouts based only on what you own.</div>
+      <div class="eq-grid" id="ob-eq-grid"></div>
+      <button class="ob-btn" onclick="saveEquipment()">GET STARTED</button>
+      <div class="ob-note">You can update your equipment anytime in Settings.</div>
+    </div>
+  </div>
+
+  <!-- HOME -->
+  <div class="page active" id="page-home">
+    <div class="ph"><div class="pt">BETTER SELF</div><div class="ps">Strength &amp; Nutrition Tracker</div></div>
+    <div id="install-bar" class="install-bar hidden">
+      <div>📲</div>
+      <div class="ib-text"><div class="ib-title">Install Better Self</div><div class="ib-sub">Add to home screen for offline access</div></div>
+      <button class="ib-btn" onclick="installApp()">INSTALL</button>
+    </div>
+    <div class="hero">
+      <div class="hero-label">Welcome back</div>
+      <div class="hero-name">ATHLETE</div>
+      <div class="hero-sub">Let's build something great today.</div>
+      <div class="streak-pill"><span>🔥</span><strong id="h-streak">0</strong><em>day streak</em></div>
+    </div>
+    <div class="stats-row">
+      <div class="sc"><div class="sv" id="h-workouts">0</div><div class="sl">Lifts</div></div>
+      <div class="sc"><div class="sv" id="h-tons">0</div><div class="sl">Tons</div></div>
+      <div class="sc"><div class="sv" id="h-steps">0</div><div class="sl">Steps</div></div>
+      <div class="sc"><div class="sv" id="h-kcal">0</div><div class="sl">kcal</div></div>
+    </div>
+    <div class="section-label">Today's Steps</div>
+    <div class="steps-card">
+      <div class="steps-top">
+        <div><div class="steps-num" id="steps-num">0</div><div class="steps-goal" id="steps-goal-lbl">Goal: 10,000 steps</div></div>
+        <div class="steps-pct" id="steps-pct">0%</div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="steps-fill" style="width:0%"></div></div>
+      <div class="steps-row">
+        <button class="step-add-btn" onclick="addSteps(1000)">+1,000</button>
+        <button class="step-add-btn" onclick="addSteps(2500)">+2,500</button>
+        <button class="step-add-btn" onclick="addSteps(5000)">+5,000</button>
+      </div>
+    </div>
+    <div class="section-label">Quick Start</div>
+    <div class="qa-grid" id="qa-grid"></div>
+    <div class="section-label">Recent Workouts</div>
+    <div class="recent-list" id="h-recent"></div>
+    <div style="height:8px;"></div>
+  </div>
+
+  <!-- EXERCISES -->
+  <div class="page" id="page-exercises">
+    <div class="ph"><div class="pt">EXERCISES</div><div class="ps">Filtered to your home gym</div></div>
+    <div class="tabs">
+      <button class="tab active" onclick="filterEx('all',this)">All</button>
+      <button class="tab" onclick="filterEx('compound',this)">Compound</button>
+      <button class="tab" onclick="filterEx('accessory',this)">Accessory</button>
+      <button class="tab" onclick="filterEx('isolation',this)">Isolation</button>
+    </div>
+    <div class="ex-filter-note" id="ex-filter-note"></div>
+    <div class="ex-grid" id="ex-grid"></div>
+    <div style="height:8px;"></div>
+  </div>
+
+  <!-- LOG -->
+  <div class="page" id="page-log">
+    <div class="ph"><div class="pt">ACTIVITY LOG</div><div class="ps">Your training history</div></div>
+    <div class="log-cta"><button class="btn-full" onclick="openWorkout('Custom Workout')">+ LOG WORKOUT</button></div>
+    <div class="log-list" id="log-list"></div>
+    <div style="height:8px;"></div>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="page" id="page-progress">
+    <div class="ph"><div class="pt">PROGRESS</div><div class="ps">Performance &amp; records</div></div>
+    <div class="prog-content">
+      <div class="prog-big">
+        <div class="pb-item"><div class="pb-num" id="pg-lifts">0</div><div class="pb-label">Total Lifts</div><div class="pb-delta" id="pg-delta">Start lifting!</div></div>
+        <div class="pb-item"><div class="pb-num" id="pg-tons">0.0</div><div class="pb-label">Tons Lifted</div><div class="pb-delta">Track your gains</div></div>
+      </div>
+      <div class="chart-card"><div class="ct">Weekly Volume (sets)</div><canvas id="vol-chart" height="100"></canvas></div>
+      <div class="chart-card"><div class="ct">Daily Steps (this week)</div><canvas id="steps-chart" height="80"></canvas></div>
+      <div class="section-label" style="padding:0 0 10px;">Personal Records</div>
+      <div class="pr-grid" id="pr-grid"></div>
+    </div>
+  </div>
+
+  <!-- MEALS -->
+  <div class="page" id="page-meals">
+    <div class="ph"><div class="pt">NUTRITION</div><div class="ps">Meal planner &amp; macro tracker</div></div>
+    <div class="meal-macros">
+      <div class="macro-card"><div class="macro-val cal" id="m-cal">0</div><div class="macro-label">kcal</div></div>
+      <div class="macro-card"><div class="macro-val pro" id="m-pro">0g</div><div class="macro-label">Protein</div></div>
+      <div class="macro-card"><div class="macro-val carb" id="m-carb">0g</div><div class="macro-label">Carbs</div></div>
+      <div class="macro-card"><div class="macro-val fat" id="m-fat">0g</div><div class="macro-label">Fat</div></div>
+    </div>
+    <div class="macro-bar-row" id="macro-bar"></div>
+    <div class="section-label">Today's Meals</div>
+    <div class="meal-sections" id="meal-sections"></div>
+    <div style="height:8px;"></div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="page" id="page-settings">
+    <div class="ph"><div class="pt">SETTINGS</div><div class="ps">Equipment &amp; goals</div></div>
+    <div class="settings-content">
+      <div class="settings-section">
+        <div class="settings-section-title">🏠 My Home Gym Equipment</div>
+        <div class="eq-setting-grid" id="eq-setting-grid"></div>
+        <button class="save-btn" onclick="saveEquipmentFromSettings()">SAVE EQUIPMENT</button>
+      </div>
+      <div class="settings-section">
+        <div class="settings-section-title">🎯 Daily Goals</div>
+        <div class="settings-row">
+          <div><div class="settings-row-label">Step Goal</div><div class="settings-row-sub">Steps per day</div></div>
+          <input class="settings-input" id="step-goal-input" type="number" inputmode="numeric"/>
+        </div>
+        <div class="settings-row">
+          <div><div class="settings-row-label">Calorie Goal</div><div class="settings-row-sub">kcal per day</div></div>
+          <input class="settings-input" id="cal-goal-input" type="number" inputmode="numeric"/>
+        </div>
+        <div class="settings-row">
+          <div><div class="settings-row-label">Protein Goal</div><div class="settings-row-sub">Grams per day</div></div>
+          <input class="settings-input" id="pro-goal-input" type="number" inputmode="numeric"/>
+        </div>
+        <button class="save-btn" onclick="saveGoals()">SAVE GOALS</button>
+      </div>
+      <div class="settings-section">
+        <div class="settings-section-title">📝 Claude Update Log</div>
+        <div style="padding:14px 16px 6px;font-size:12px;color:var(--muted);line-height:1.5;">
+          Log feature requests and bug reports as you train. When you're ready for a new version, tap <strong style="color:var(--accent2)">Copy for Claude</strong> and paste it into a new chat.
+        </div>
+        <button class="save-btn" style="margin:4px 16px 14px;width:calc(100% - 32px);" onclick="openFeedback()">OPEN UPDATE LOG</button>
+      </div>
+      <div class="settings-section">
+        <div class="settings-section-title">⚠️ Data</div>
+        <button class="danger-btn" onclick="resetData()">RESET ALL DATA</button>
+      </div>
+      <div class="settings-footer">Better Self v2.0 &bull; Built for your home gym</div>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <nav>
+    <button class="nb active" onclick="goPage('home',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1z"/><polyline points="9 21 9 12 15 12 15 21"/></svg>
+      <span>Home</span>
+    </button>
+    <button class="nb" onclick="goPage('exercises',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5h11M6.5 12h11M6.5 17.5h11"/><circle cx="3.5" cy="6.5" r="1"/><circle cx="3.5" cy="12" r="1"/><circle cx="3.5" cy="17.5" r="1"/></svg>
+      <span>Exercises</span>
+    </button>
+    <button class="nb" onclick="goPage('log',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="14" x2="16" y2="14"/></svg>
+      <span>Log</span>
+    </button>
+    <button class="nb" onclick="goPage('progress',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      <span>Progress</span>
+    </button>
+    <button class="nb" onclick="goPage('meals',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>
+      <span>Nutrition</span>
+    </button>
+    <button class="nb" onclick="goPage('settings',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      <span>Settings</span>
+    </button>
+  </nav>
+
+  <!-- WORKOUT MODAL -->
+  <div class="overlay" id="w-overlay">
+    <div class="modal">
+      <div class="mhandle"></div>
+      <div class="mhdr">
+        <div class="mtitle" id="m-title">Workout</div>
+        <button class="mclose" onclick="closeWorkout()">✕</button>
+      </div>
+      <div class="timer-disp">
+        <div class="timer-num" id="t-disp">00:00</div>
+        <div class="timer-lbl">Elapsed Time</div>
+      </div>
+      <div class="timer-ctrls">
+        <button class="btn-p" id="t-toggle" onclick="toggleTimer()">PAUSE</button>
+        <button class="btn-d" onclick="finishWorkout()">FINISH</button>
+      </div>
+      <div class="slbl">Log Sets — <span id="m-exercise-name" style="color:var(--accent)">Exercise</span></div>
+      <div class="set-hdrs">
+        <div class="sh">SET</div><div class="sh">KG</div><div class="sh">REPS</div><div></div>
+      </div>
+      <div class="set-logger" id="set-logger"></div>
+      <div class="add-set-wrap"><button class="add-set" onclick="addSet()">+ Add Set</button></div>
+      <div style="height:12px;"></div>
+    </div>
+  </div>
+
+  <!-- FLOATING FEEDBACK BUTTON -->
+  <button class="feedback-fab" id="feedback-fab" onclick="openFeedback()" title="Log a feature request or bug">📝</button>
+
+  <!-- FEEDBACK SHEET -->
+  <div class="fb-overlay" id="fb-overlay">
+    <div class="fb-sheet">
+      <div class="fb-handle"></div>
+      <div class="fb-hdr">
+        <div class="fb-title">Update <span>Log</span></div>
+        <button class="fb-close" onclick="closeFeedback()">✕</button>
+      </div>
+      <div class="fb-how">
+        <strong>How it works:</strong> Log requests and bugs as you train. When you want a new version, tap <strong>Copy for Claude</strong>, open a new Claude chat, and paste. Claude will build the next version and keep all your data intact.
+      </div>
+      <div class="fb-notes-list" id="fb-notes-list"></div>
+      <div class="fb-export-row" id="fb-export-row"></div>
+      <div class="fb-input-area">
+        <div class="fb-type-row">
+          <button class="fb-type-btn active-feature" id="fbt-feature" onclick="setFbType('feature')">✨ Feature</button>
+          <button class="fb-type-btn" id="fbt-bug" onclick="setFbType('bug')">🐛 Bug</button>
+          <button class="fb-type-btn" id="fbt-idea" onclick="setFbType('idea')">💡 Idea</button>
+        </div>
+        <div class="fb-row">
+          <textarea class="fb-textarea" id="fb-input" placeholder="Describe the feature, bug, or idea..." rows="2"></textarea>
+          <button class="fb-submit" onclick="submitFeedback()">ADD</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ===== EQUIPMENT LIST =====
+const EQUIPMENT_LIST = [
+  {id:'barbell',         name:'Barbell',          ico:'🏋️', desc:'Olympic or standard bar'},
+  {id:'dumbbells',       name:'Dumbbells',         ico:'💪', desc:'Fixed or adjustable'},
+  {id:'bench',           name:'Bench',             ico:'🪑', desc:'Flat, incline or decline'},
+  {id:'squat_rack',      name:'Squat Rack',        ico:'🔩', desc:'Power rack or squat stand'},
+  {id:'pullup_bar',      name:'Pull-up Bar',       ico:'🔝', desc:'Doorframe or wall-mounted'},
+  {id:'cables',          name:'Cable Machine',     ico:'🪢', desc:'Single or dual pulley'},
+  {id:'kettlebell',      name:'Kettlebells',       ico:'🫙', desc:'One or more weights'},
+  {id:'resistance_bands',name:'Resistance Bands',  ico:'🎀', desc:'Loop or tube bands'},
+  {id:'dip_bar',         name:'Dip Bars',          ico:'⬇️', desc:'Parallel bars or attachments'},
+  {id:'ez_bar',          name:'EZ Curl Bar',       ico:'〰️', desc:'Angled curl bar'},
+  {id:'ab_wheel',        name:'Ab Wheel',          ico:'⭕', desc:'Core roller'},
+  {id:'bodyweight',      name:'Bodyweight Only',   ico:'🧘', desc:'No equipment needed'},
+];
+
+// ===== EXERCISE DATABASE =====
+// requires: ALL of these equipment IDs must be owned
+// anyOf: at least ONE of these must be owned (used when requires is empty)
+const ALL_EXERCISES = [
+  // COMPOUND
+  {name:'Barbell Bench Press',  cat:'compound', muscle:'Chest / Triceps',        scheme:'5x5',  ico:'🏋️',type:'str', requires:['barbell','bench']},
+  {name:'Barbell Squat',        cat:'compound', muscle:'Quads / Glutes',          scheme:'5x5',  ico:'🦵',type:'str', requires:['barbell','squat_rack']},
+  {name:'Deadlift',             cat:'compound', muscle:'Posterior Chain',          scheme:'1x5',  ico:'⛓️',type:'str', requires:['barbell']},
+  {name:'Barbell OHP',          cat:'compound', muscle:'Shoulders / Triceps',     scheme:'5x5',  ico:'⬆️',type:'str', requires:['barbell']},
+  {name:'Barbell Row',          cat:'compound', muscle:'Back / Biceps',           scheme:'5x5',  ico:'↔️',type:'str', requires:['barbell']},
+  {name:'Romanian Deadlift',    cat:'compound', muscle:'Hamstrings / Glutes',     scheme:'3x8',  ico:'🔩',type:'str', requires:['barbell']},
+  {name:'DB Bench Press',       cat:'compound', muscle:'Chest / Triceps',         scheme:'4x10', ico:'💪',type:'str', requires:['dumbbells','bench']},
+  {name:'DB Overhead Press',    cat:'compound', muscle:'Shoulders',               scheme:'4x10', ico:'⬆️',type:'str', requires:['dumbbells']},
+  {name:'DB Row',               cat:'compound', muscle:'Back / Biceps',           scheme:'4x10', ico:'↔️',type:'str', requires:['dumbbells']},
+  {name:'Goblet Squat',         cat:'compound', muscle:'Quads / Glutes',          scheme:'4x10', ico:'🫙',type:'str', requires:['dumbbells'], anyOf:['dumbbells','kettlebell']},
+  {name:'KB Swing',             cat:'compound', muscle:'Posterior Chain',          scheme:'4x15', ico:'🫙',type:'str', requires:['kettlebell']},
+  {name:'Push Ups',             cat:'compound', muscle:'Chest / Triceps / Core',  scheme:'4x15', ico:'💪',type:'str', requires:[], anyOf:[]},
+  // ACCESSORY
+  {name:'Pull Ups',             cat:'accessory',muscle:'Lats / Biceps',           scheme:'4x8',  ico:'🔝',type:'acc', requires:['pullup_bar']},
+  {name:'Dips',                 cat:'accessory',muscle:'Chest / Triceps',         scheme:'4x10', ico:'⬇️',type:'acc', requires:['dip_bar']},
+  {name:'Incline DB Press',     cat:'accessory',muscle:'Upper Chest',             scheme:'4x10', ico:'📐',type:'acc', requires:['dumbbells','bench']},
+  {name:'Cable Row',            cat:'accessory',muscle:'Mid Back',                scheme:'3x12', ico:'🪢',type:'acc', requires:['cables']},
+  {name:'Cable Chest Fly',      cat:'accessory',muscle:'Chest',                   scheme:'3x12', ico:'🪢',type:'acc', requires:['cables']},
+  {name:'Band Pull Apart',      cat:'accessory',muscle:'Rear Delts / Upper Back', scheme:'3x15', ico:'🎀',type:'acc', requires:['resistance_bands']},
+  {name:'Inverted Row',         cat:'accessory',muscle:'Back / Biceps',           scheme:'3x10', ico:'🔝',type:'acc', requires:['pullup_bar'], anyOf:['pullup_bar','squat_rack']},
+  // ISOLATION
+  {name:'Barbell Curl',         cat:'isolation',muscle:'Biceps',                  scheme:'3x12', ico:'💪',type:'iso', requires:['barbell'], anyOf:['barbell','ez_bar']},
+  {name:'DB Curl',              cat:'isolation',muscle:'Biceps',                  scheme:'3x12', ico:'💪',type:'iso', requires:['dumbbells']},
+  {name:'Hammer Curl',          cat:'isolation',muscle:'Biceps / Brachialis',     scheme:'3x12', ico:'🔨',type:'iso', requires:['dumbbells']},
+  {name:'Tricep Pushdown',      cat:'isolation',muscle:'Triceps',                 scheme:'3x12', ico:'⬇️',type:'iso', requires:['cables']},
+  {name:'Overhead Tricep Ext',  cat:'isolation',muscle:'Triceps',                 scheme:'3x12', ico:'⬆️',type:'iso', requires:['dumbbells'], anyOf:['dumbbells','ez_bar','cables']},
+  {name:'Lateral Raise',        cat:'isolation',muscle:'Side Delts',              scheme:'3x15', ico:'↔️',type:'iso', requires:['dumbbells'], anyOf:['dumbbells','cables','resistance_bands']},
+  {name:'Band Bicep Curl',      cat:'isolation',muscle:'Biceps',                  scheme:'3x15', ico:'🎀',type:'iso', requires:['resistance_bands']},
+  {name:'Ab Wheel Rollout',     cat:'isolation',muscle:'Core',                    scheme:'3x10', ico:'⭕',type:'iso', requires:['ab_wheel']},
+  {name:'KB Halo',              cat:'isolation',muscle:'Shoulders / Core',        scheme:'3x12', ico:'🫙',type:'iso', requires:['kettlebell']},
+  {name:'Plank',                cat:'isolation',muscle:'Core',                    scheme:'3x60s',ico:'🧘',type:'iso', requires:[], anyOf:[]},
+  {name:'Calf Raise',           cat:'isolation',muscle:'Calves',                  scheme:'4x20', ico:'👟',type:'iso', requires:[], anyOf:['barbell','dumbbells','cables','kettlebell','bodyweight','squat_rack']},
+];
+
+const MEAL_TEMPLATES = [
+  {name:'Breakfast', ico:'🌅', foods:[{name:'Oats (80g)',cal:296,p:10,c:54,f:6},{name:'Whole Eggs x3',cal:210,p:18,c:1,f:15}]},
+  {name:'Lunch',     ico:'☀️', foods:[{name:'Chicken Breast (200g)',cal:220,p:46,c:0,f:4},{name:'Brown Rice (150g)',cal:170,p:4,c:36,f:1}]},
+  {name:'Pre-Workout',ico:'⚡',foods:[{name:'Banana',cal:105,p:1,c:27,f:0},{name:'Greek Yogurt (200g)',cal:120,p:18,c:8,f:2}]},
+  {name:'Dinner',    ico:'🌙', foods:[]},
+];
+
+// ===== STATE =====
+let state = JSON.parse(localStorage.getItem('betterself2_state') || 'null') || {
+  equipment:[], setupDone:false,
+  workouts:0, sets:0, streak:0,
+  steps:0, stepGoal:10000, calGoal:2500, proGoal:180,
+  meals: JSON.parse(JSON.stringify(MEAL_TEMPLATES)),
+  log:[],
+  weeklySteps:[0,0,0,0,0,0,0],
+  weeklyVol:[0,0,0,0,0,0,0],
+};
+function save(){localStorage.setItem('betterself2_state',JSON.stringify(state));}
+
+// ===== EQUIPMENT FILTER =====
+function isAvailable(ex){
+  if(state.equipment.length===0) return true;
+  // bodyweight / no-equipment exercises always available
+  if(!ex.requires || ex.requires.length===0){
+    if(!ex.anyOf || ex.anyOf.length===0) return true;
+    return ex.anyOf.some(e=>state.equipment.includes(e));
+  }
+  // anyOf override: if defined, at least one must match
+  if(ex.anyOf && ex.anyOf.length>0){
+    return ex.anyOf.some(e=>state.equipment.includes(e));
+  }
+  // requires: all must be present
+  return ex.requires.every(r=>state.equipment.includes(r));
+}
+
+// ===== ONBOARDING =====
+function renderOnboarding(){
+  document.getElementById('ob-eq-grid').innerHTML = EQUIPMENT_LIST.map(eq=>`
+    <div class="eq-item ${state.equipment.includes(eq.id)?'selected':''}" id="ob-${eq.id}" onclick="toggleEquip('${eq.id}')">
+      <div class="eq-ico">${eq.ico}</div>
+      <div class="eq-info"><div class="eq-name">${eq.name}</div><div class="eq-desc">${eq.desc}</div></div>
+      <div class="eq-check">✓</div>
+    </div>`).join('');
+}
+
+function toggleEquip(id){
+  const idx=state.equipment.indexOf(id);
+  if(idx>=0) state.equipment.splice(idx,1);
+  else state.equipment.push(id);
+  // sync both grids
+  ['ob-','eqs-'].forEach(prefix=>{
+    const el=document.getElementById(prefix+id);
+    if(el) el.classList.toggle('selected',state.equipment.includes(id));
+  });
+}
+
+function saveEquipment(){
+  state.setupDone=true; save();
+  document.getElementById('onboarding').classList.remove('show');
+  renderHome(); renderExercises(); renderQuickStart();
+}
+
+function saveEquipmentFromSettings(){
+  save(); renderHome(); renderExercises(); renderQuickStart();
+  const toast=document.createElement('div');
+  toast.textContent='Equipment saved!';
+  Object.assign(toast.style,{position:'fixed',bottom:'90px',left:'50%',transform:'translateX(-50%)',background:'var(--accent)',color:'#fff',padding:'10px 20px',borderRadius:'20px',fontFamily:"'Barlow Condensed',sans-serif",fontSize:'16px',fontWeight:'700',zIndex:'999',animation:'none'});
+  document.body.appendChild(toast);
+  setTimeout(()=>toast.remove(),2000);
+}
+
+// ===== NAV =====
+function goPage(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  btn.classList.add('active');
+  if(id==='progress') drawCharts();
+  if(id==='meals') renderMeals();
+  if(id==='settings') renderSettings();
+}
+
+// ===== HOME =====
+function renderHome(){
+  document.getElementById('h-streak').textContent=state.streak;
+  document.getElementById('h-workouts').textContent=state.workouts;
+  document.getElementById('h-tons').textContent=(state.sets*12*55/1000).toFixed(1);
+  document.getElementById('h-steps').textContent=state.steps>=1000?(state.steps/1000).toFixed(1)+'k':state.steps;
+  document.getElementById('h-kcal').textContent=state.meals.reduce((a,m)=>a+m.foods.reduce((b,f)=>b+f.cal,0),0);
+  renderSteps(); renderRecentHome(); renderQuickStart();
+}
+
+function renderSteps(){
+  const pct=Math.min(100,Math.round(state.steps/state.stepGoal*100));
+  document.getElementById('steps-num').textContent=state.steps.toLocaleString();
+  document.getElementById('steps-pct').textContent=pct+'%';
+  document.getElementById('steps-fill').style.width=pct+'%';
+  document.getElementById('steps-goal-lbl').textContent='Goal: '+state.stepGoal.toLocaleString()+' steps';
+}
+
+function addSteps(n){
+  state.steps+=n;
+  state.weeklySteps[new Date().getDay()]=(state.weeklySteps[new Date().getDay()]||0)+n;
+  save(); renderHome();
+}
+
+function renderRecentHome(){
+  const el=document.getElementById('h-recent');
+  el.innerHTML=state.log.length===0
+    ?'<div style="padding:4px 0 16px;font-size:13px;color:var(--muted);">No workouts yet. Hit Quick Start above!</div>'
+    :state.log.slice(0,3).map(w=>`
+      <div class="wc">
+        <div class="wc-left"><div class="wc-name">${w.name}</div><div class="wc-meta">${w.date} &middot; ${w.dur} min &middot; ${w.sets} sets</div></div>
+        <div class="wc-badge">${w.dur}m</div>
+      </div>`).join('');
+}
+
+function renderQuickStart(){
+  const avail=ALL_EXERCISES.filter(isAvailable);
+  const has=name=>avail.some(e=>e.name===name||e.name.toLowerCase().includes(name.toLowerCase()));
+  let cards=[];
+  if(has('Bench')) cards.push({ico:'🏋️',lbl:'Push Day',sub:'Chest · Shoulders · Triceps',name:'Push Day'});
+  if(has('Row')||has('Pull Ups')) cards.push({ico:'💪',lbl:'Pull Day',sub:'Back · Biceps',name:'Pull Day'});
+  if(has('Squat')||has('Goblet')) cards.push({ico:'🦵',lbl:'Leg Day',sub:'Quads · Hamstrings · Glutes',name:'Leg Day'});
+  if(has('Deadlift')) cards.push({ico:'⛓️',lbl:'Deadlift Day',sub:'Posterior chain focus',name:'Deadlift Day'});
+  if(cards.length===0||avail.length>0) cards.push({ico:'⚡',lbl:'Full Body',sub:'Available exercises',name:'Full Body'});
+  document.getElementById('qa-grid').innerHTML=cards.slice(0,4).map(c=>`
+    <div class="qa" onclick="openWorkout('${c.name}')">
+      <div class="qa-ico">${c.ico}</div><div class="qa-lbl">${c.lbl}</div><div class="qa-sub">${c.sub}</div>
+    </div>`).join('');
+}
+
+// ===== EXERCISES =====
+let currentExFilter='all';
+function renderExercises(cat){
+  cat=cat||currentExFilter; currentExFilter=cat;
+  const list=cat==='all'?ALL_EXERCISES:ALL_EXERCISES.filter(e=>e.cat===cat);
+  const avail=list.filter(isAvailable);
+  const unavail=list.filter(e=>!isAvailable(e));
+  const cls={str:'ico-str',acc:'ico-acc',iso:'ico-iso'};
+  const tagcls={str:'',acc:'blue',iso:'green'};
+  const noteEl=document.getElementById('ex-filter-note');
+  noteEl.innerHTML=state.equipment.length>0
+    ?`<span style="color:var(--green)">✓</span> ${avail.length} available with your equipment &nbsp;<span style="color:var(--muted2)">· ${unavail.length} need other gear</span>`
+    :`<span style="color:var(--muted)">Go to Settings to enter your equipment and filter exercises.</span>`;
+  const card=(e,a)=>`
+    <div class="ex-item${a?'':' unavail'}" ${a?`onclick="openWorkout('${e.name}')"`:''}> 
+      <div class="ex-ico ${cls[e.type]}">${e.ico}</div>
+      <div class="ex-body">
+        <div class="ex-name">${e.name}</div>
+        <div class="ex-detail">${e.scheme}</div>
+        <span class="ex-tag ${tagcls[e.type]}">${e.muscle}</span>
+        ${!a?`<span class="ex-tag grey" style="margin-left:4px;">needs other gear</span>`:''}
+      </div>
+    </div>`;
+  document.getElementById('ex-grid').innerHTML=
+    avail.map(e=>card(e,true)).join('')+
+    (unavail.length?`<div class="ex-divider">Not available with your current equipment</div>`+unavail.map(e=>card(e,false)).join(''):'');
+}
+
+function filterEx(cat,btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active'); renderExercises(cat);
+}
+
+// ===== LOG =====
+function renderLog(){
+  document.getElementById('log-list').innerHTML=state.log.length===0
+    ?'<div style="padding:4px 18px;font-size:13px;color:var(--muted);">No workouts logged yet.</div>'
+    :state.log.map((w,i)=>`
+      <div class="le">
+        <div class="le-hdr" onclick="toggleLE(${i})">
+          <div><div class="le-title">${w.name}</div><div class="le-date">${w.date} &middot; ${w.dur} min</div></div>
+          <div class="le-tag">${w.sets} SETS</div>
+        </div>
+        <div class="le-body" id="le-${i}">
+          <div class="le-row"><strong>Duration</strong>${w.dur} min</div>
+          <div class="le-row"><strong>Total Sets</strong>${w.sets}</div>
+          <div class="le-row"><strong>Volume</strong>${(w.vol||0).toLocaleString()} kg</div>
+        </div>
+      </div>`).join('');
+}
+function toggleLE(i){document.getElementById('le-'+i).classList.toggle('open');}
+
+// ===== PROGRESS =====
+function renderProgress(){
+  document.getElementById('pg-lifts').textContent=state.workouts;
+  document.getElementById('pg-tons').textContent=(state.sets*12*55/1000).toFixed(1);
+  document.getElementById('pg-delta').textContent=state.workouts>0?'Keep pushing!':'Log your first lift!';
+  const avail=ALL_EXERCISES.filter(isAvailable);
+  const prNames=['Barbell Bench Press','Barbell Squat','Deadlift','Barbell OHP']
+    .filter(n=>avail.some(e=>e.name===n));
+  const fallback=avail.slice(0,4).map(e=>e.name);
+  const toShow=(prNames.length>=2?prNames:fallback).slice(0,4);
+  document.getElementById('pr-grid').innerHTML=toShow.map(n=>`
+    <div class="pr-card">
+      <div class="pr-ex">${n}</div>
+      <div class="pr-val">--</div>
+      <div class="pr-unit">Log sets to track PR</div>
+    </div>`).join('');
+}
+
+function drawCharts(){
+  renderProgress();
+  const dow=new Date().getDay();
+  const days=['S','M','T','W','T','F','S'];
+  const rot=arr=>[...arr.slice(dow+1),...arr.slice(0,dow+1)];
+  drawBar('vol-chart',  rot(state.weeklyVol),  rot(days),'#ff6b2b',100);
+  drawBar('steps-chart',rot(state.weeklySteps),rot(days),'#3b82f6',80);
+}
+
+function drawBar(id,data,labels,color,h){
+  const canvas=document.getElementById(id);
+  const ctx=canvas.getContext('2d');
+  const dpr=window.devicePixelRatio||1;
+  canvas.width=canvas.offsetWidth*dpr; canvas.height=h*dpr;
+  ctx.scale(dpr,dpr);
+  const W=canvas.offsetWidth,H=h;
+  ctx.clearRect(0,0,W,H);
+  const max=Math.max(...data,1)*1.2;
+  const bW=(W-40)/data.length, gap=7;
+  data.forEach((v,i)=>{
+    const bh=(v/max)*(H-20), x=20+i*bW+gap/2, y=H-bh-14;
+    ctx.fillStyle=i===data.length-1?color:color+'44';
+    const r=4;
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);ctx.lineTo(x+bW-gap-r,y);
+    ctx.arcTo(x+bW-gap,y,x+bW-gap,y+r,r);
+    ctx.lineTo(x+bW-gap,Math.max(y+bh,H-14));
+    ctx.lineTo(x,Math.max(y+bh,H-14));
+    ctx.lineTo(x,y+r);ctx.arcTo(x,y,x+r,y,r);
+    ctx.closePath();ctx.fill();
+    ctx.fillStyle=i===data.length-1?color:'#555';
+    ctx.font='700 10px Syne';ctx.textAlign='center';
+    ctx.fillText(labels[i],x+(bW-gap)/2,H);
+  });
+}
+
+// ===== MEALS =====
+function getMacros(){
+  let cal=0,p=0,c=0,f=0;
+  state.meals.forEach(m=>m.foods.forEach(fd=>{cal+=fd.cal;p+=fd.p;c+=fd.c;f+=fd.f;}));
+  return{cal,p,c,f};
+}
+function renderMeals(){
+  const t=getMacros();
+  document.getElementById('m-cal').textContent=t.cal;
+  document.getElementById('m-pro').textContent=t.p+'g';
+  document.getElementById('m-carb').textContent=t.c+'g';
+  document.getElementById('m-fat').textContent=t.f+'g';
+  const mt=t.p*4+t.c*4+t.f*9||1;
+  const pp=Math.round(t.p*4/mt*100),cp=Math.round(t.c*4/mt*100),fp=100-pp-cp;
+  document.getElementById('macro-bar').innerHTML=`
+    <div class="macro-seg pro" style="width:${pp}%;height:6px;border-radius:3px;"></div>
+    <div class="macro-seg carb" style="width:${cp}%;height:6px;border-radius:3px;"></div>
+    <div class="macro-seg fat" style="width:${fp}%;height:6px;border-radius:3px;"></div>`;
+  document.getElementById('meal-sections').innerHTML=state.meals.map((m,mi)=>`
+    <div class="meal-section">
+      <div class="ms-hdr" onclick="toggleMeal(${mi})">
+        <div class="ms-title"><span class="ms-ico">${m.ico}</span>${m.name}</div>
+        <div class="ms-cals">${m.foods.reduce((a,f)=>a+f.cal,0)} kcal</div>
+      </div>
+      <div class="ms-body" id="ms-${mi}">
+        ${m.foods.map((fd,fi)=>`
+          <div class="food-item">
+            <div><div class="fi-name">${fd.name}</div><div class="fi-detail">${fd.p}g P · ${fd.c}g C · ${fd.f}g F</div></div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div class="fi-cal">${fd.cal}</div>
+              <button onclick="removeFood(${mi},${fi})" style="background:none;border:none;color:var(--muted);font-size:14px;cursor:pointer;padding:4px;">✕</button>
+            </div>
+          </div>`).join('')}
+        <div class="add-food-row">
+          <div class="add-food-input-row">
+            <input class="fi-input" id="fi-n-${mi}" placeholder="Food name" type="text"/>
+            <input class="fi-input-sm" id="fi-c-${mi}" placeholder="kcal" type="number" inputmode="numeric"/>
+            <input class="fi-input-sm" id="fi-p-${mi}" placeholder="P(g)" type="number" inputmode="numeric"/>
+          </div>
+          <div style="margin-top:6px;display:flex;gap:6px;">
+            <input class="fi-input-sm" id="fi-cb-${mi}" placeholder="C(g)" type="number" inputmode="numeric"/>
+            <input class="fi-input-sm" id="fi-f-${mi}" placeholder="F(g)" type="number" inputmode="numeric"/>
+            <button class="fi-add-btn" onclick="addFood(${mi})" style="flex:1;">ADD</button>
+          </div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+function toggleMeal(i){const el=document.getElementById('ms-'+i);el.style.display=el.style.display==='block'?'none':'block';}
+function addFood(mi){
+  const n=document.getElementById('fi-n-'+mi).value.trim();
+  if(!n)return;
+  state.meals[mi].foods.push({
+    name:n,
+    cal:parseInt(document.getElementById('fi-c-'+mi).value)||0,
+    p:parseInt(document.getElementById('fi-p-'+mi).value)||0,
+    c:parseInt(document.getElementById('fi-cb-'+mi).value)||0,
+    f:parseInt(document.getElementById('fi-f-'+mi).value)||0,
+  });
+  save(); renderMeals(); document.getElementById('ms-'+mi).style.display='block';
+}
+function removeFood(mi,fi){state.meals[mi].foods.splice(fi,1);save();renderMeals();document.getElementById('ms-'+mi).style.display='block';}
+
+// ===== SETTINGS =====
+function renderSettings(){
+  document.getElementById('eq-setting-grid').innerHTML=EQUIPMENT_LIST.map(eq=>`
+    <div class="eq-s-item ${state.equipment.includes(eq.id)?'selected':''}" id="eqs-${eq.id}" onclick="toggleEquip('${eq.id}')">
+      <div class="eq-s-ico">${eq.ico}</div>
+      <div class="eq-s-name">${eq.name}</div>
+      <div class="eq-s-check">✓</div>
+    </div>`).join('');
+  document.getElementById('step-goal-input').value=state.stepGoal;
+  document.getElementById('cal-goal-input').value=state.calGoal||2500;
+  document.getElementById('pro-goal-input').value=state.proGoal||180;
+}
+function saveGoals(){
+  state.stepGoal=parseInt(document.getElementById('step-goal-input').value)||10000;
+  state.calGoal=parseInt(document.getElementById('cal-goal-input').value)||2500;
+  state.proGoal=parseInt(document.getElementById('pro-goal-input').value)||180;
+  save(); renderSteps();
+  const toast=document.createElement('div');
+  toast.textContent='Goals saved!';
+  Object.assign(toast.style,{position:'fixed',bottom:'90px',left:'50%',transform:'translateX(-50%)',background:'var(--green)',color:'#fff',padding:'10px 20px',borderRadius:'20px',fontFamily:"'Barlow Condensed',sans-serif",fontSize:'16px',fontWeight:'700',zIndex:'999'});
+  document.body.appendChild(toast);
+  setTimeout(()=>toast.remove(),2000);
+}
+function resetData(){
+  if(confirm('Reset all data? This cannot be undone.')){localStorage.removeItem('betterself2_state');location.reload();}
+}
+
+// ===== WORKOUT MODAL =====
+let timerSecs=0,timerRunning=false,timerInt=null,sets=[],wName='';
+function openWorkout(name){
+  wName=name;
+  document.getElementById('m-title').textContent=name;
+  const avail=ALL_EXERCISES.filter(isAvailable);
+  const hint=avail.find(e=>e.name.toLowerCase().includes(name.toLowerCase().split(' ')[0]))||avail[0];
+  document.getElementById('m-exercise-name').textContent=hint?hint.name:'Exercise';
+  timerSecs=0;timerRunning=true;
+  sets=[{kg:'',reps:'',done:false},{kg:'',reps:'',done:false},{kg:'',reps:'',done:false}];
+  renderSets();updateTimerDisp();clearInterval(timerInt);
+  timerInt=setInterval(()=>{if(timerRunning){timerSecs++;updateTimerDisp();}},1000);
+  document.getElementById('w-overlay').classList.add('open');
+  document.getElementById('t-toggle').textContent='PAUSE';
+}
+function closeWorkout(){clearInterval(timerInt);timerRunning=false;document.getElementById('w-overlay').classList.remove('open');}
+function toggleTimer(){timerRunning=!timerRunning;document.getElementById('t-toggle').textContent=timerRunning?'PAUSE':'RESUME';}
+function updateTimerDisp(){
+  document.getElementById('t-disp').textContent=String(Math.floor(timerSecs/60)).padStart(2,'0')+':'+String(timerSecs%60).padStart(2,'0');
+}
+function renderSets(){
+  document.getElementById('set-logger').innerHTML=sets.map((s,i)=>`
+    <div class="set-row">
+      <div class="set-n">${i+1}</div>
+      <input class="set-inp" type="number" placeholder="0" value="${s.kg}" oninput="sets[${i}].kg=this.value" inputmode="decimal"/>
+      <input class="set-inp" type="number" placeholder="0" value="${s.reps}" oninput="sets[${i}].reps=this.value" inputmode="numeric"/>
+      <button class="set-ck ${s.done?'done':''}" onclick="toggleSet(${i})">${s.done?'✓':'○'}</button>
+    </div>`).join('');
+}
+function addSet(){sets.push({kg:'',reps:'',done:false});renderSets();}
+function toggleSet(i){sets[i].done=!sets[i].done;renderSets();}
+function finishWorkout(){
+  clearInterval(timerInt);
+  const dur=Math.max(1,Math.round(timerSecs/60));
+  const completedSets=sets.filter(s=>s.done).length||sets.length;
+  const vol=sets.reduce((a,s)=>a+(parseFloat(s.kg)||60)*(parseInt(s.reps)||8),0);
+  state.log.unshift({name:wName,date:'Today',dur,sets:completedSets,vol:Math.round(vol)});
+  state.workouts++;state.sets+=completedSets;state.streak++;
+  state.weeklyVol[new Date().getDay()]=(state.weeklyVol[new Date().getDay()]||0)+completedSets;
+  save();renderHome();renderLog();closeWorkout();
+}
+
+// ===== FEEDBACK / UPDATE LOG =====
+let fbType = 'feature';
+
+function openFeedback(){
+  renderFeedbackList();
+  document.getElementById('fb-overlay').classList.add('open');
+}
+function closeFeedback(){ document.getElementById('fb-overlay').classList.remove('open'); }
+
+function setFbType(t){
+  fbType = t;
+  ['feature','bug','idea'].forEach(x=>{
+    const btn = document.getElementById('fbt-'+x);
+    btn.className = 'fb-type-btn' + (x===t ? ' active-'+t : '');
+  });
+}
+
+function submitFeedback(){
+  const text = document.getElementById('fb-input').value.trim();
+  if(!text) return;
+  if(!state.feedback) state.feedback = [];
+  state.feedback.unshift({
+    text, type: fbType,
+    date: new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}),
+    id: Date.now()
+  });
+  save();
+  document.getElementById('fb-input').value = '';
+  renderFeedbackList();
+  updateFab();
+}
+
+function deleteFeedback(id){
+  state.feedback = (state.feedback||[]).filter(f=>f.id!==id);
+  save(); renderFeedbackList(); updateFab();
+}
+
+function renderFeedbackList(){
+  const notes = state.feedback || [];
+  const list = document.getElementById('fb-notes-list');
+  const exportRow = document.getElementById('fb-export-row');
+
+  if(notes.length === 0){
+    list.innerHTML = '<div class="fb-empty">No notes yet. Add your first request below!</div>';
+    exportRow.innerHTML = '';
+    return;
+  }
+
+  const dotCls = {feature:'',bug:'bug',idea:'idea'};
+  list.innerHTML = notes.map(n=>`
+    <div class="fb-note-item">
+      <div class="fb-note-dot ${dotCls[n.type]||''}"></div>
+      <div class="fb-note-body">
+        <div class="fb-note-text">${n.text}</div>
+        <div class="fb-note-meta">
+          <span class="fb-note-tag ${n.type}">${n.type}</span>
+          <span>${n.date}</span>
+        </div>
+      </div>
+      <button class="fb-note-del" onclick="deleteFeedback(${n.id})">✕</button>
+    </div>`).join('');
+
+  exportRow.innerHTML = `
+    <button class="fb-export-btn primary" onclick="copyForClaude()">📋 Copy for Claude</button>
+    <button class="fb-export-btn" onclick="clearAllFeedback()">Clear All</button>`;
+}
+
+function copyForClaude(){
+  const notes = state.feedback || [];
+  if(!notes.length){ alert('No notes to copy!'); return; }
+
+  const appVersion = 'Better Self v2.0';
+  const equipment = state.equipment.length
+    ? state.equipment.join(', ')
+    : 'not set';
+  const workoutCount = state.workouts;
+  const logSummary = state.log.slice(0,5).map(w=>`  - ${w.name} (${w.date}, ${w.dur}min, ${w.sets} sets)`).join('\n');
+
+  const lines = notes.map(n=>`[${n.type.toUpperCase()}] ${n.text}`).join('\n');
+
+  const fullText =
+`=== BETTER SELF UPDATE REQUEST ===
+App: ${appVersion}
+Equipment: ${equipment}
+Total workouts logged: ${workoutCount}
+Recent sessions:
+${logSummary || '  (none yet)'}
+
+--- MY REQUESTS (${notes.length}) ---
+${lines}
+
+---
+Please update the Better Self app with the above changes. Keep all existing features and make sure the new version migrates my localStorage data (key: betterself2_state) so I don't lose any history.
+=================================`;
+
+  navigator.clipboard.writeText(fullText).then(()=>{
+    const btn = event.target;
+    const orig = btn.textContent;
+    btn.textContent = '✓ Copied!';
+    btn.style.background = 'rgba(34,197,94,0.15)';
+    btn.style.borderColor = 'var(--green)';
+    btn.style.color = 'var(--green)';
+    setTimeout(()=>{
+      btn.textContent = orig;
+      btn.style.background = '';
+      btn.style.borderColor = '';
+      btn.style.color = '';
+    }, 2500);
+  }).catch(()=>{
+    // fallback: show text in a prompt so user can manually copy
+    prompt('Copy this text and paste it into Claude:', fullText);
+  });
+}
+
+function clearAllFeedback(){
+  if(confirm('Clear all update notes?')){
+    state.feedback = [];
+    save(); renderFeedbackList(); updateFab();
+  }
+}
+
+function updateFab(){
+  const fab = document.getElementById('feedback-fab');
+  const count = (state.feedback||[]).length;
+  fab.classList.toggle('has-notes', count > 0);
+  fab.title = count > 0 ? `${count} note${count>1?'s':''} in update log` : 'Log a feature request or bug';
+}
+
+// ===== PWA =====
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;document.getElementById('install-bar').classList.remove('hidden');});
+function installApp(){if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.then(()=>{deferredPrompt=null;document.getElementById('install-bar').classList.add('hidden');});}}
+window.addEventListener('appinstalled',()=>document.getElementById('install-bar').classList.add('hidden'));
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
+
+// ===== INIT =====
+function init(){
+  if(!state.setupDone){
+    renderOnboarding();
+    document.getElementById('onboarding').classList.add('show');
+  }
+  renderHome();renderExercises();renderLog();renderProgress();updateFab();
+}
+init();
+</script>
+</body>
+</html>
