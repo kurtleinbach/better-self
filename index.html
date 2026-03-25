@@ -516,7 +516,10 @@
   <!-- LOG -->
   <div class="page" id="page-log">
     <div class="ph"><div class="pt">ACTIVITY LOG</div><div class="ps">Your training history</div></div>
-    <div class="log-cta"><button class="btn-full" onclick="openWorkout('Custom Workout')">+ LOG WORKOUT</button></div>
+    <div class="log-cta">
+      <button class="btn-full" onclick="openWorkout('Custom Workout')">+ LOG WORKOUT</button>
+      <button class="btn-full" style="background:var(--s2);color:var(--accent);border:1px solid rgba(255,107,43,0.3);flex:0.8;" onclick="openWorkoutBuilder()">BUILD</button>
+    </div>
     <div class="log-list" id="log-list"></div>
     <div style="height:8px;"></div>
   </div>
@@ -625,11 +628,25 @@
       </div>
       <div class="timer-disp">
         <div class="timer-num" id="t-disp">00:00</div>
-        <div class="timer-lbl">Elapsed Time</div>
+        <div class="timer-lbl" id="t-lbl">Elapsed Time</div>
       </div>
       <div class="timer-ctrls">
         <button class="btn-p" id="t-toggle" onclick="toggleTimer()">PAUSE</button>
         <button class="btn-d" onclick="finishWorkout()">FINISH</button>
+      </div>
+      <!-- Exercise navigation for multi-exercise workouts -->
+      <div id="w-ex-nav" style="display:none;padding:0 18px 12px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <button id="w-prev-ex" onclick="prevExercise()" style="padding:8px 14px;background:var(--s2);border:1px solid var(--border);border-radius:8px;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;cursor:pointer;">← PREV</button>
+          <div id="w-ex-counter" style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:0.1em;"></div>
+          <button id="w-next-ex" onclick="nextExercise()" style="padding:8px 14px;background:var(--accent);border:none;border-radius:8px;color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;cursor:pointer;">NEXT →</button>
+        </div>
+      </div>
+      <!-- Rest timer overlay -->
+      <div id="rest-timer" style="display:none;text-align:center;padding:16px 18px;background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);margin:0 18px 12px;border-radius:14px;">
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.14em;color:var(--blue);font-weight:700;">Rest Timer</div>
+        <div id="rest-num" style="font-family:'Barlow Condensed',sans-serif;font-size:52px;font-weight:900;color:var(--blue);line-height:1;margin:4px 0;"></div>
+        <button onclick="skipRest()" style="padding:8px 16px;background:none;border:1px solid var(--border);border-radius:8px;color:var(--muted);font-family:'Syne',sans-serif;font-size:12px;font-weight:700;cursor:pointer;">SKIP REST</button>
       </div>
       <div class="slbl">Log Sets — <span id="m-exercise-name" style="color:var(--accent)">Exercise</span></div>
       <div class="set-hdrs">
@@ -638,6 +655,29 @@
       <div class="set-logger" id="set-logger"></div>
       <div class="add-set-wrap"><button class="add-set" onclick="addSet()">+ Add Set</button></div>
       <div style="height:12px;"></div>
+    </div>
+  </div>
+
+  <!-- WORKOUT BUILDER MODAL -->
+  <div class="overlay" id="wb-overlay" onclick="if(event.target===this)closeBuilder()">
+    <div class="modal">
+      <div class="mhandle"></div>
+      <div class="mhdr">
+        <div class="mtitle">Build Workout</div>
+        <button class="mclose" onclick="closeBuilder()">✕</button>
+      </div>
+      <div style="padding:14px 18px 0;">
+        <input class="search-input" id="wb-name" placeholder="Workout name (e.g. Upper Body)" style="margin-bottom:10px;background-image:none;padding-left:14px;"/>
+      </div>
+      <div class="slbl">Select Exercises</div>
+      <div style="padding:0 18px;">
+        <input class="search-input" id="wb-search" placeholder="Search exercises to add..." oninput="renderBuilderList()"/>
+      </div>
+      <div id="wb-selected" style="padding:8px 18px;display:flex;flex-wrap:wrap;gap:6px;"></div>
+      <div id="wb-list" style="padding:0 18px;max-height:40vh;overflow-y:auto;"></div>
+      <div style="padding:14px 18px;">
+        <button class="btn-full" onclick="startBuiltWorkout()">START WORKOUT</button>
+      </div>
     </div>
   </div>
 
@@ -1423,45 +1463,200 @@ function resetData(){
 }
 
 // ===== WORKOUT MODAL =====
-let timerSecs=0,timerRunning=false,timerInt=null,sets=[],wName='';
-function openWorkout(name){
+let timerSecs=0,timerRunning=false,timerInt=null;
+let wName='',wExercises=[],wExIdx=0,wAllSets={};
+let restTimerInt=null,restSecs=0;
+
+function openWorkout(name, exerciseList){
   wName=name;
   document.getElementById('m-title').textContent=name;
-  const avail=ALL_EXERCISES.filter(isAvailable);
-  const hint=avail.find(e=>e.name.toLowerCase().includes(name.toLowerCase().split(' ')[0]))||avail[0];
-  document.getElementById('m-exercise-name').textContent=hint?hint.name:'Exercise';
+
+  // Build exercise list for this workout
+  if(exerciseList && exerciseList.length){
+    wExercises=exerciseList;
+  } else {
+    const avail=ALL_EXERCISES.filter(isAvailable);
+    const match=avail.find(e=>e.name===name)||avail.find(e=>e.name.toLowerCase().includes(name.toLowerCase().split(' ')[0]));
+    wExercises=match?[match.name]:[avail[0]?avail[0].name:'Exercise'];
+  }
+  wExIdx=0;
+  wAllSets={};
+  wExercises.forEach(n=>{wAllSets[n]=[{kg:'',reps:'',done:false},{kg:'',reps:'',done:false},{kg:'',reps:'',done:false}];});
+
+  const multiEx=wExercises.length>1;
+  document.getElementById('w-ex-nav').style.display=multiEx?'block':'none';
+  updateExNav();
+  loadCurrentExSets();
+
   timerSecs=0;timerRunning=true;
-  sets=[{kg:'',reps:'',done:false},{kg:'',reps:'',done:false},{kg:'',reps:'',done:false}];
-  renderSets();updateTimerDisp();clearInterval(timerInt);
+  updateTimerDisp();clearInterval(timerInt);
   timerInt=setInterval(()=>{if(timerRunning){timerSecs++;updateTimerDisp();}},1000);
   document.getElementById('w-overlay').classList.add('open');
   document.getElementById('t-toggle').textContent='PAUSE';
+  document.getElementById('t-lbl').textContent='Elapsed Time';
 }
-function closeWorkout(){clearInterval(timerInt);timerRunning=false;document.getElementById('w-overlay').classList.remove('open');}
+
+function updateExNav(){
+  document.getElementById('m-exercise-name').textContent=wExercises[wExIdx]||'Exercise';
+  document.getElementById('w-ex-counter').textContent=`Exercise ${wExIdx+1} of ${wExercises.length}`;
+  document.getElementById('w-prev-ex').style.visibility=wExIdx>0?'visible':'hidden';
+  document.getElementById('w-next-ex').textContent=wExIdx<wExercises.length-1?'NEXT →':'DONE';
+}
+
+function saveCurrentSets(){
+  const name=wExercises[wExIdx];
+  if(name) wAllSets[name]=getCurrentSets();
+}
+function getCurrentSets(){
+  const rows=document.querySelectorAll('#set-logger .set-row');
+  return Array.from(rows).map((r,i)=>{
+    const inputs=r.querySelectorAll('input');
+    return{kg:inputs[0]?inputs[0].value:'',reps:inputs[1]?inputs[1].value:'',done:wAllSets[wExercises[wExIdx]]?.[i]?.done||false};
+  });
+}
+function loadCurrentExSets(){
+  const name=wExercises[wExIdx];
+  const sets=wAllSets[name]||[{kg:'',reps:'',done:false},{kg:'',reps:'',done:false},{kg:'',reps:'',done:false}];
+  renderSets(sets);
+  updateExNav();
+}
+
+function nextExercise(){
+  saveCurrentSets();
+  if(wExIdx<wExercises.length-1){
+    wExIdx++;
+    loadCurrentExSets();
+    startRestTimer(90);
+  } else {
+    finishWorkout();
+  }
+}
+function prevExercise(){
+  if(wExIdx>0){saveCurrentSets();wExIdx--;loadCurrentExSets();}
+}
+
+// Rest timer
+function startRestTimer(secs){
+  restSecs=secs;
+  document.getElementById('rest-timer').style.display='block';
+  updateRestDisp();
+  clearInterval(restTimerInt);
+  restTimerInt=setInterval(()=>{
+    restSecs--;
+    if(restSecs<=0){skipRest(); playBeep();}
+    else{updateRestDisp(); if(restSecs===3)playBeep();}
+  },1000);
+}
+function updateRestDisp(){document.getElementById('rest-num').textContent=restSecs+'s';}
+function skipRest(){clearInterval(restTimerInt);document.getElementById('rest-timer').style.display='none';}
+
+// Audio cue
+function playBeep(){
+  try{
+    const ctx=new(window.AudioContext||window.webkitAudioContext)();
+    const osc=ctx.createOscillator();const gain=ctx.createGain();
+    osc.connect(gain);gain.connect(ctx.destination);
+    osc.frequency.value=880;gain.gain.value=0.3;
+    osc.start();osc.stop(ctx.currentTime+0.15);
+  }catch(e){}
+}
+
+function closeWorkout(){clearInterval(timerInt);clearInterval(restTimerInt);timerRunning=false;document.getElementById('rest-timer').style.display='none';document.getElementById('w-overlay').classList.remove('open');}
 function toggleTimer(){timerRunning=!timerRunning;document.getElementById('t-toggle').textContent=timerRunning?'PAUSE':'RESUME';}
 function updateTimerDisp(){
   document.getElementById('t-disp').textContent=String(Math.floor(timerSecs/60)).padStart(2,'0')+':'+String(timerSecs%60).padStart(2,'0');
 }
-function renderSets(){
-  document.getElementById('set-logger').innerHTML=sets.map((s,i)=>`
+function renderSets(setsArr){
+  document.getElementById('set-logger').innerHTML=setsArr.map((s,i)=>`
     <div class="set-row">
       <div class="set-n">${i+1}</div>
-      <input class="set-inp" type="number" placeholder="0" value="${s.kg}" oninput="sets[${i}].kg=this.value" inputmode="decimal"/>
-      <input class="set-inp" type="number" placeholder="0" value="${s.reps}" oninput="sets[${i}].reps=this.value" inputmode="numeric"/>
+      <input class="set-inp" type="number" placeholder="0" value="${s.kg}" oninput="wAllSets[wExercises[wExIdx]][${i}].kg=this.value" inputmode="decimal"/>
+      <input class="set-inp" type="number" placeholder="0" value="${s.reps}" oninput="wAllSets[wExercises[wExIdx]][${i}].reps=this.value" inputmode="numeric"/>
       <button class="set-ck ${s.done?'done':''}" onclick="toggleSet(${i})">${s.done?'✓':'○'}</button>
     </div>`).join('');
 }
-function addSet(){sets.push({kg:'',reps:'',done:false});renderSets();}
-function toggleSet(i){sets[i].done=!sets[i].done;renderSets();}
+function addSet(){
+  const name=wExercises[wExIdx];
+  wAllSets[name].push({kg:'',reps:'',done:false});
+  renderSets(wAllSets[name]);
+}
+function toggleSet(i){
+  const name=wExercises[wExIdx];
+  wAllSets[name][i].done=!wAllSets[name][i].done;
+  renderSets(wAllSets[name]);
+  // Auto rest timer after completing a set
+  if(wAllSets[name][i].done){
+    startRestTimer(90);
+    playBeep();
+  }
+}
 function finishWorkout(){
-  clearInterval(timerInt);
+  saveCurrentSets();
+  clearInterval(timerInt);clearInterval(restTimerInt);
   const dur=Math.max(1,Math.round(timerSecs/60));
-  const completedSets=sets.filter(s=>s.done).length||sets.length;
-  const vol=sets.reduce((a,s)=>a+(parseFloat(s.kg)||60)*(parseInt(s.reps)||8),0);
-  state.log.unshift({name:wName,date:'Today',dur,sets:completedSets,vol:Math.round(vol)});
-  state.workouts++;state.sets+=completedSets;state.streak++;
-  state.weeklyVol[new Date().getDay()]=(state.weeklyVol[new Date().getDay()]||0)+completedSets;
+  let totalSets=0,totalVol=0,exerciseDetails=[];
+  Object.entries(wAllSets).forEach(([name,sets])=>{
+    const completed=sets.filter(s=>s.done);
+    totalSets+=completed.length||sets.length;
+    const vol=sets.reduce((a,s)=>a+(parseFloat(s.kg)||0)*(parseInt(s.reps)||0),0);
+    totalVol+=vol;
+    exerciseDetails.push({name,sets:sets.map(s=>({kg:s.kg,reps:s.reps,done:s.done}))});
+  });
+  const dateStr=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+  state.log.unshift({name:wName,date:dateStr,dur,sets:totalSets,vol:Math.round(totalVol),exercises:exerciseDetails});
+  state.workouts++;state.sets+=totalSets;state.streak++;
+  state.weeklyVol[new Date().getDay()]=(state.weeklyVol[new Date().getDay()]||0)+totalSets;
+  // Track PRs
+  if(!state.prs) state.prs={};
+  exerciseDetails.forEach(ed=>{
+    ed.sets.forEach(s=>{
+      const w=parseFloat(s.kg)||0;
+      if(w>0 && (!state.prs[ed.name]||w>state.prs[ed.name])){
+        state.prs[ed.name]=w;
+      }
+    });
+  });
   save();renderHome();renderLog();closeWorkout();
+  showToast(`Workout complete! ${totalSets} sets logged.`,'var(--green)');
+}
+
+// ===== WORKOUT BUILDER =====
+let builderSelected=[];
+function openWorkoutBuilder(){
+  builderSelected=[];
+  document.getElementById('wb-overlay').classList.add('open');
+  document.getElementById('wb-name').value='';
+  document.getElementById('wb-search').value='';
+  renderBuilderList();renderBuilderSelected();
+}
+function closeBuilder(){document.getElementById('wb-overlay').classList.remove('open');}
+function renderBuilderList(){
+  const q=(document.getElementById('wb-search').value||'').toLowerCase();
+  const avail=ALL_EXERCISES.filter(isAvailable);
+  const filtered=q?avail.filter(e=>e.name.toLowerCase().includes(q)||e.muscle.toLowerCase().includes(q)):avail;
+  document.getElementById('wb-list').innerHTML=filtered.map(e=>{
+    const added=builderSelected.includes(e.name);
+    return `<div class="ex-item" style="margin-bottom:6px;${added?'opacity:0.5;':''}" onclick="toggleBuilderEx('${e.name.replace(/'/g,"\\'")}')">
+      <div class="ex-ico ico-${e.type==='str'?'str':e.type==='acc'?'acc':'iso'}">${e.ico}</div>
+      <div class="ex-body"><div class="ex-name">${e.name}</div><div class="ex-detail">${e.muscle}</div></div>
+      <div style="color:${added?'var(--green)':'var(--muted)'};font-size:18px;">${added?'✓':'+'}</div>
+    </div>`;
+  }).join('');
+}
+function toggleBuilderEx(name){
+  const idx=builderSelected.indexOf(name);
+  if(idx>=0)builderSelected.splice(idx,1);else builderSelected.push(name);
+  renderBuilderList();renderBuilderSelected();
+}
+function renderBuilderSelected(){
+  document.getElementById('wb-selected').innerHTML=builderSelected.map(n=>
+    `<span style="font-size:11px;background:rgba(255,107,43,0.12);color:var(--accent);padding:4px 10px;border-radius:8px;font-weight:700;">${n} ✕</span>`).join('');
+}
+function startBuiltWorkout(){
+  if(builderSelected.length===0){showToast('Select at least one exercise','var(--red)');return;}
+  const name=document.getElementById('wb-name').value.trim()||'Custom Workout';
+  closeBuilder();
+  openWorkout(name,builderSelected);
 }
 
 // ===== FEEDBACK / UPDATE LOG =====
