@@ -333,6 +333,29 @@
     .pd-start-btn{margin:16px 18px 0;width:calc(100% - 36px);padding:16px;background:var(--accent);color:#fff;border:none;border-radius:13px;font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;letter-spacing:0.08em;cursor:pointer;}
     .pd-start-btn:active{transform:scale(0.98);opacity:0.9;}
 
+    /* ===== BODY METRICS ===== */
+    .bm-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:250;display:none;align-items:flex-end;}
+    .bm-overlay.open{display:flex;}
+    .bm-sheet{width:100%;max-height:80dvh;background:var(--s1);border-top:1px solid var(--border);border-radius:22px 22px 0 0;overflow-y:auto;padding-bottom:calc(var(--safe-b) + 20px);animation:slideUp 0.3s cubic-bezier(0.34,1.56,0.64,1);}
+    .bm-input-row{display:flex;gap:8px;align-items:center;padding:0 18px;margin-bottom:10px;}
+    .bm-label{font-size:13px;font-weight:700;min-width:80px;}
+    .bm-input{flex:1;background:var(--s2);border:1px solid var(--border);border-radius:9px;padding:11px 12px;color:var(--text);font-family:'Syne',sans-serif;font-size:15px;text-align:center;}
+    .bm-input:focus{outline:none;border-color:var(--accent);}
+    .bm-history{padding:12px 18px 0;}
+    .bm-entry{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--s2);font-size:13px;}
+    .bm-entry:last-child{border-bottom:none;}
+
+    /* ===== ACHIEVEMENTS ===== */
+    .ach-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 18px;margin-bottom:10px;}
+    .ach-card{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center;transition:all 0.2s;}
+    .ach-card.earned{border-color:var(--accent2);background:rgba(255,181,71,0.05);}
+    .ach-card.locked{opacity:0.4;}
+    .ach-ico{font-size:32px;margin-bottom:6px;}
+    .ach-name{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:0.04em;}
+    .ach-desc{font-size:10px;color:var(--muted);margin-top:2px;line-height:1.3;}
+    .ach-bar{height:4px;background:var(--s3);border-radius:2px;margin-top:8px;overflow:hidden;}
+    .ach-fill{height:100%;background:var(--accent2);border-radius:2px;transition:width 0.4s;}
+
     /* ===== FEEDBACK ===== */
     .feedback-fab{position:fixed;bottom:calc(var(--nav-h) + var(--safe-b) + 14px);right:16px;width:48px;height:48px;border-radius:50%;background:var(--s2);border:1px solid var(--border);color:var(--muted);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:90;box-shadow:0 4px 20px rgba(0,0,0,0.4);transition:all 0.2s;}
     .feedback-fab:active{transform:scale(0.92);}
@@ -526,16 +549,27 @@
 
   <!-- PROGRESS -->
   <div class="page" id="page-progress">
-    <div class="ph"><div class="pt">PROGRESS</div><div class="ps">Performance &amp; records</div></div>
+    <div class="ph"><div class="pt">PROGRESS</div><div class="ps">Performance, records &amp; achievements</div></div>
     <div class="prog-content">
       <div class="prog-big">
         <div class="pb-item"><div class="pb-num" id="pg-lifts">0</div><div class="pb-label">Total Lifts</div><div class="pb-delta" id="pg-delta">Start lifting!</div></div>
-        <div class="pb-item"><div class="pb-num" id="pg-tons">0.0</div><div class="pb-label">Tons Lifted</div><div class="pb-delta">Track your gains</div></div>
+        <div class="pb-item"><div class="pb-num" id="pg-tons">0.0</div><div class="pb-label">Tons Lifted</div><div class="pb-delta" id="pg-tons-delta">Track your gains</div></div>
       </div>
       <div class="chart-card"><div class="ct">Weekly Volume (sets)</div><canvas id="vol-chart" height="100"></canvas></div>
       <div class="chart-card"><div class="ct">Daily Steps (this week)</div><canvas id="steps-chart" height="80"></canvas></div>
+
       <div class="section-label" style="padding:0 0 10px;">Personal Records</div>
       <div class="pr-grid" id="pr-grid"></div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;">
+        <div class="section-label" style="padding:0;">Body Metrics</div>
+        <button onclick="openBodyMetrics()" style="background:rgba(255,107,43,0.1);border:1px solid rgba(255,107,43,0.3);border-radius:8px;padding:6px 12px;color:var(--accent);font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">+ LOG</button>
+      </div>
+      <div id="bm-summary" style="margin-bottom:10px;"></div>
+      <div class="chart-card" id="bm-chart-card" style="display:none;"><div class="ct">Body Weight Trend</div><canvas id="bm-chart" height="80"></canvas></div>
+
+      <div class="section-label" style="padding:0 0 10px;margin-top:4px;">Achievements</div>
+      <div class="ach-grid" id="ach-grid"></div>
     </div>
   </div>
 
@@ -655,6 +689,23 @@
       <div class="set-logger" id="set-logger"></div>
       <div class="add-set-wrap"><button class="add-set" onclick="addSet()">+ Add Set</button></div>
       <div style="height:12px;"></div>
+    </div>
+  </div>
+
+  <!-- BODY METRICS MODAL -->
+  <div class="bm-overlay" id="bm-overlay" onclick="if(event.target===this)closeBodyMetrics()">
+    <div class="bm-sheet">
+      <div class="mhandle"></div>
+      <div class="mhdr"><div class="mtitle">Log Body Metrics</div><button class="mclose" onclick="closeBodyMetrics()">✕</button></div>
+      <div style="padding:16px 0 8px;">
+        <div class="bm-input-row"><div class="bm-label">Weight</div><input class="bm-input" id="bm-weight" type="number" inputmode="decimal" placeholder="kg"/></div>
+        <div class="bm-input-row"><div class="bm-label">Body Fat %</div><input class="bm-input" id="bm-bf" type="number" inputmode="decimal" placeholder="%"/></div>
+        <div class="bm-input-row"><div class="bm-label">Chest</div><input class="bm-input" id="bm-chest" type="number" inputmode="decimal" placeholder="cm"/></div>
+        <div class="bm-input-row"><div class="bm-label">Waist</div><input class="bm-input" id="bm-waist" type="number" inputmode="decimal" placeholder="cm"/></div>
+        <div class="bm-input-row"><div class="bm-label">Arms</div><input class="bm-input" id="bm-arms" type="number" inputmode="decimal" placeholder="cm"/></div>
+      </div>
+      <div style="padding:0 18px 14px;"><button class="btn-full" onclick="saveBodyMetrics()">SAVE</button></div>
+      <div class="bm-history" id="bm-history"></div>
     </div>
   </div>
 
@@ -908,6 +959,8 @@ let state = JSON.parse(localStorage.getItem('betterself2_state') || 'null') || {
 if(!state.goal) state.goal='';
 if(!state.experience) state.experience='';
 if(!state.availTime) state.availTime='';
+if(!state.prs) state.prs={};
+if(!state.bodyMetrics) state.bodyMetrics=[];
 function save(){localStorage.setItem('betterself2_state',JSON.stringify(state));}
 
 // ===== EQUIPMENT FILTER =====
@@ -1197,19 +1250,147 @@ function toggleLE(i){document.getElementById('le-'+i).classList.toggle('open');}
 // ===== PROGRESS =====
 function renderProgress(){
   document.getElementById('pg-lifts').textContent=state.workouts;
-  document.getElementById('pg-tons').textContent=(state.sets*12*55/1000).toFixed(1);
-  document.getElementById('pg-delta').textContent=state.workouts>0?'Keep pushing!':'Log your first lift!';
-  const avail=ALL_EXERCISES.filter(isAvailable);
-  const prNames=['Barbell Bench Press','Barbell Squat','Deadlift','Barbell OHP']
-    .filter(n=>avail.some(e=>e.name===n));
-  const fallback=avail.slice(0,4).map(e=>e.name);
-  const toShow=(prNames.length>=2?prNames:fallback).slice(0,4);
-  document.getElementById('pr-grid').innerHTML=toShow.map(n=>`
-    <div class="pr-card">
-      <div class="pr-ex">${n}</div>
-      <div class="pr-val">--</div>
-      <div class="pr-unit">Log sets to track PR</div>
-    </div>`).join('');
+  // Calculate real total volume from log
+  const totalVol=state.log.reduce((a,w)=>a+(w.vol||0),0);
+  document.getElementById('pg-tons').textContent=(totalVol/1000).toFixed(1);
+  document.getElementById('pg-delta').textContent=state.workouts>0?`${state.streak} day streak`:'Log your first lift!';
+  document.getElementById('pg-tons-delta').textContent=totalVol>0?`${totalVol.toLocaleString()} kg total`:'Track your gains';
+
+  // Real PR display
+  const prs=state.prs||{};
+  const prEntries=Object.entries(prs).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  if(prEntries.length>0){
+    document.getElementById('pr-grid').innerHTML=prEntries.map(([name,val])=>`
+      <div class="pr-card">
+        <div class="pr-ex">${name}</div>
+        <div class="pr-val">${val}</div>
+        <div class="pr-unit">kg personal best</div>
+      </div>`).join('');
+  } else {
+    const avail=ALL_EXERCISES.filter(isAvailable).slice(0,4);
+    document.getElementById('pr-grid').innerHTML=avail.map(e=>`
+      <div class="pr-card">
+        <div class="pr-ex">${e.name}</div>
+        <div class="pr-val">--</div>
+        <div class="pr-unit">Log sets to track PR</div>
+      </div>`).join('');
+  }
+
+  // Body metrics summary
+  renderBodyMetricsSummary();
+  // Achievements
+  renderAchievements();
+}
+
+// ===== BODY METRICS =====
+function openBodyMetrics(){
+  document.getElementById('bm-overlay').classList.add('open');
+  document.getElementById('bm-weight').value='';
+  document.getElementById('bm-bf').value='';
+  document.getElementById('bm-chest').value='';
+  document.getElementById('bm-waist').value='';
+  document.getElementById('bm-arms').value='';
+  renderBmHistory();
+}
+function closeBodyMetrics(){document.getElementById('bm-overlay').classList.remove('open');}
+function saveBodyMetrics(){
+  if(!state.bodyMetrics) state.bodyMetrics=[];
+  const entry={
+    date:new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short'}),
+    ts:Date.now(),
+    weight:parseFloat(document.getElementById('bm-weight').value)||null,
+    bf:parseFloat(document.getElementById('bm-bf').value)||null,
+    chest:parseFloat(document.getElementById('bm-chest').value)||null,
+    waist:parseFloat(document.getElementById('bm-waist').value)||null,
+    arms:parseFloat(document.getElementById('bm-arms').value)||null,
+  };
+  if(!entry.weight&&!entry.bf&&!entry.chest&&!entry.waist&&!entry.arms){showToast('Enter at least one measurement','var(--red)');return;}
+  state.bodyMetrics.unshift(entry);
+  save();renderBmHistory();closeBodyMetrics();renderProgress();
+  showToast('Body metrics saved!','var(--green)');
+}
+function renderBmHistory(){
+  const entries=state.bodyMetrics||[];
+  document.getElementById('bm-history').innerHTML=entries.length===0
+    ?'<div style="padding:10px 0;font-size:12px;color:var(--muted);text-align:center;">No entries yet.</div>'
+    :entries.slice(0,10).map(e=>`
+      <div class="bm-entry">
+        <span style="color:var(--muted)">${e.date}</span>
+        <span>${e.weight?e.weight+'kg':''}${e.bf?' · '+e.bf+'%':''}</span>
+        <span style="color:var(--muted)">${[e.chest?'C:'+e.chest:'',e.waist?'W:'+e.waist:'',e.arms?'A:'+e.arms:''].filter(Boolean).join(' · ')||''}</span>
+      </div>`).join('');
+}
+function renderBodyMetricsSummary(){
+  const entries=state.bodyMetrics||[];
+  const el=document.getElementById('bm-summary');
+  const chartCard=document.getElementById('bm-chart-card');
+  if(entries.length===0){
+    el.innerHTML='<div style="padding:8px 0;font-size:12px;color:var(--muted);">Tap + LOG to track your weight and measurements.</div>';
+    chartCard.style.display='none';
+    return;
+  }
+  const latest=entries[0];
+  const prev=entries.length>1?entries[1]:null;
+  const wDelta=prev&&latest.weight&&prev.weight?(latest.weight-prev.weight).toFixed(1):null;
+  el.innerHTML=`<div style="display:flex;gap:8px;flex-wrap:wrap;">
+    ${latest.weight?`<div class="sc" style="flex:1;min-width:60px;"><div class="sv">${latest.weight}</div><div class="sl">kg</div>${wDelta?`<div style="font-size:11px;color:${parseFloat(wDelta)>0?'var(--red)':'var(--green)'};">${parseFloat(wDelta)>0?'+':''}${wDelta}</div>`:''}</div>`:''}
+    ${latest.bf?`<div class="sc" style="flex:1;min-width:60px;"><div class="sv">${latest.bf}%</div><div class="sl">Body Fat</div></div>`:''}
+    ${latest.chest?`<div class="sc" style="flex:1;min-width:60px;"><div class="sv">${latest.chest}</div><div class="sl">Chest cm</div></div>`:''}
+    ${latest.waist?`<div class="sc" style="flex:1;min-width:60px;"><div class="sv">${latest.waist}</div><div class="sl">Waist cm</div></div>`:''}
+    ${latest.arms?`<div class="sc" style="flex:1;min-width:60px;"><div class="sv">${latest.arms}</div><div class="sl">Arms cm</div></div>`:''}
+  </div>`;
+  // Draw weight chart if we have enough data
+  const weights=entries.filter(e=>e.weight).slice(0,7).reverse();
+  if(weights.length>=2){
+    chartCard.style.display='block';
+    setTimeout(()=>drawLine('bm-chart',weights.map(w=>w.weight),weights.map(w=>w.date),'#ff6b2b',80),50);
+  } else {
+    chartCard.style.display='none';
+  }
+}
+function drawLine(id,data,labels,color,h){
+  const canvas=document.getElementById(id);
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  const dpr=window.devicePixelRatio||1;
+  canvas.width=canvas.offsetWidth*dpr;canvas.height=h*dpr;
+  ctx.scale(dpr,dpr);
+  const W=canvas.offsetWidth,H=h;
+  ctx.clearRect(0,0,W,H);
+  const min=Math.min(...data)*0.98,max=Math.max(...data)*1.02;
+  const range=max-min||1;
+  const pts=data.map((v,i)=>({x:30+i*(W-60)/(data.length-1),y:H-10-(v-min)/range*(H-30)}));
+  ctx.strokeStyle=color;ctx.lineWidth=2;ctx.lineJoin='round';
+  ctx.beginPath();pts.forEach((p,i)=>i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y));ctx.stroke();
+  pts.forEach(p=>{ctx.fillStyle=color;ctx.beginPath();ctx.arc(p.x,p.y,3,0,Math.PI*2);ctx.fill();});
+  ctx.font='700 9px Syne';ctx.textAlign='center';
+  pts.forEach((p,i)=>{ctx.fillStyle='#555';ctx.fillText(labels[i],p.x,H-1);ctx.fillStyle=color;ctx.fillText(data[i].toString(),p.x,p.y-8);});
+}
+
+// ===== ACHIEVEMENTS =====
+const ACHIEVEMENTS=[
+  {id:'first_workout',ico:'🎯',name:'First Blood',desc:'Complete your first workout',check:s=>s.workouts>=1,target:1,progress:s=>s.workouts},
+  {id:'5_workouts',ico:'💪',name:'Getting Started',desc:'Complete 5 workouts',check:s=>s.workouts>=5,target:5,progress:s=>s.workouts},
+  {id:'25_workouts',ico:'🔥',name:'On Fire',desc:'Complete 25 workouts',check:s=>s.workouts>=25,target:25,progress:s=>s.workouts},
+  {id:'100_workouts',ico:'🏆',name:'Centurion',desc:'Complete 100 workouts',check:s=>s.workouts>=100,target:100,progress:s=>s.workouts},
+  {id:'streak_7',ico:'📅',name:'Week Warrior',desc:'7-day workout streak',check:s=>s.streak>=7,target:7,progress:s=>s.streak},
+  {id:'streak_30',ico:'🗓️',name:'Monthly Machine',desc:'30-day workout streak',check:s=>s.streak>=30,target:30,progress:s=>s.streak},
+  {id:'10k_steps',ico:'👟',name:'Step Master',desc:'Hit 10,000 steps in a day',check:s=>s.steps>=10000,target:10000,progress:s=>s.steps},
+  {id:'log_food',ico:'🥗',name:'Fuel Tracker',desc:'Log 10 food items',check:s=>(s.meals||[]).reduce((a,m)=>a+m.foods.length,0)>=10,target:10,progress:s=>(s.meals||[]).reduce((a,m)=>a+m.foods.length,0)},
+  {id:'first_pr',ico:'⭐',name:'Record Breaker',desc:'Set your first personal record',check:s=>Object.keys(s.prs||{}).length>=1,target:1,progress:s=>Object.keys(s.prs||{}).length},
+  {id:'body_log',ico:'📏',name:'Self Aware',desc:'Log body metrics 3 times',check:s=>(s.bodyMetrics||[]).length>=3,target:3,progress:s=>(s.bodyMetrics||[]).length},
+];
+function renderAchievements(){
+  document.getElementById('ach-grid').innerHTML=ACHIEVEMENTS.map(a=>{
+    const earned=a.check(state);
+    const prog=Math.min(a.progress(state)/a.target,1);
+    return `<div class="ach-card ${earned?'earned':'locked'}">
+      <div class="ach-ico">${a.ico}</div>
+      <div class="ach-name">${a.name}</div>
+      <div class="ach-desc">${a.desc}</div>
+      <div class="ach-bar"><div class="ach-fill" style="width:${Math.round(prog*100)}%"></div></div>
+    </div>`;
+  }).join('');
 }
 
 function drawCharts(){
