@@ -290,6 +290,49 @@
     .add-set{width:100%;padding:12px;border:1px dashed var(--border);border-radius:9px;background:none;color:var(--muted);font-family:'Syne',sans-serif;font-size:13px;font-weight:700;cursor:pointer;}
     .add-set:active{background:var(--s2);}
 
+    /* ===== PROGRAMS ===== */
+    .prog-card{background:var(--s1);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:10px;}
+    .prog-card-img{height:100px;display:flex;align-items:center;justify-content:center;font-size:42px;position:relative;overflow:hidden;}
+    .prog-card-img.push{background:linear-gradient(135deg,#1a1208,#2a1a0a);}
+    .prog-card-img.pull{background:linear-gradient(135deg,#0a1220,#0a1a2a);}
+    .prog-card-img.legs{background:linear-gradient(135deg,#0a200a,#0a2a1a);}
+    .prog-card-img.hiit{background:linear-gradient(135deg,#2a0a0a,#200a1a);}
+    .prog-card-img.bw{background:linear-gradient(135deg,#1a0a20,#200a2a);}
+    .prog-card-img.full{background:linear-gradient(135deg,#1a1a08,#2a2a0a);}
+    .prog-card-img.str{background:linear-gradient(135deg,#1a1208,#2a1a0a);}
+    .prog-card-badge{position:absolute;top:10px;right:10px;font-size:9px;text-transform:uppercase;letter-spacing:0.1em;font-weight:700;padding:4px 8px;border-radius:6px;background:rgba(0,0,0,0.5);color:var(--accent2);}
+    .prog-card-body{padding:14px 16px;}
+    .prog-card-title{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;letter-spacing:0.04em;}
+    .prog-card-desc{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.4;}
+    .prog-card-meta{display:flex;gap:12px;margin-top:10px;font-size:11px;color:var(--muted);}
+    .prog-card-meta span{display:flex;align-items:center;gap:4px;}
+    .prog-tabs{display:flex;gap:6px;padding:12px 18px 0;overflow-x:auto;}
+    .prog-tab{white-space:nowrap;padding:8px 14px;border-radius:9px;border:1px solid var(--border);background:none;color:var(--muted);font-family:'Syne',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;cursor:pointer;transition:all 0.15s;flex-shrink:0;}
+    .prog-tab.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+    .prog-list{padding:12px 18px 0;display:flex;flex-direction:column;gap:0;}
+    .prog-detail-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:250;display:none;align-items:flex-end;}
+    .prog-detail-overlay.open{display:flex;}
+    .prog-detail{width:100%;max-height:88dvh;background:var(--s1);border-top:1px solid var(--border);border-radius:22px 22px 0 0;overflow-y:auto;padding-bottom:calc(var(--safe-b) + 20px);animation:slideUp 0.3s cubic-bezier(0.34,1.56,0.64,1);}
+    .pd-hero{padding:22px 18px;background:linear-gradient(145deg,#1a1208,#141414);border-bottom:1px solid #3a2510;}
+    .pd-label{font-size:10px;text-transform:uppercase;letter-spacing:0.14em;color:var(--accent);font-weight:700;margin-bottom:4px;}
+    .pd-title{font-family:'Barlow Condensed',sans-serif;font-size:34px;font-weight:900;letter-spacing:0.04em;line-height:1.1;}
+    .pd-desc{font-size:13px;color:var(--muted);margin-top:8px;line-height:1.5;}
+    .pd-stats{display:flex;gap:16px;margin-top:14px;}
+    .pd-stat{display:flex;flex-direction:column;gap:2px;}
+    .pd-stat-val{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:var(--text);}
+    .pd-stat-lbl{font-size:9px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);font-weight:700;}
+    .pd-section{padding:14px 18px 0;}
+    .pd-section-title{font-size:10px;text-transform:uppercase;letter-spacing:0.14em;color:var(--accent);font-weight:700;margin-bottom:10px;}
+    .pd-day{background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:8px;}
+    .pd-day-title{font-weight:700;font-size:14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;}
+    .pd-day-rest{color:var(--muted);font-size:12px;font-style:italic;}
+    .pd-ex-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px;}
+    .pd-ex-row:last-child{border-bottom:none;}
+    .pd-ex-name{font-weight:500;color:var(--text);}
+    .pd-ex-scheme{color:var(--muted);font-size:12px;}
+    .pd-start-btn{margin:16px 18px 0;width:calc(100% - 36px);padding:16px;background:var(--accent);color:#fff;border:none;border-radius:13px;font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;letter-spacing:0.08em;cursor:pointer;}
+    .pd-start-btn:active{transform:scale(0.98);opacity:0.9;}
+
     /* ===== FEEDBACK ===== */
     .feedback-fab{position:fixed;bottom:calc(var(--nav-h) + var(--safe-b) + 14px);right:16px;width:48px;height:48px;border-radius:50%;background:var(--s2);border:1px solid var(--border);color:var(--muted);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:90;box-shadow:0 4px 20px rgba(0,0,0,0.4);transition:all 0.2s;}
     .feedback-fab:active{transform:scale(0.92);}
@@ -403,7 +446,10 @@
 
   <!-- HOME -->
   <div class="page active" id="page-home">
-    <div class="ph"><div class="pt">BETTER SELF</div><div class="ps">Strength &amp; Nutrition Tracker</div></div>
+    <div class="ph" style="display:flex;justify-content:space-between;align-items:flex-start;">
+      <div><div class="pt">BETTER SELF</div><div class="ps">Strength &amp; Nutrition Tracker</div></div>
+      <button onclick="goPage('settings',this)" style="background:var(--s2);border:1px solid var(--border);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);margin-top:4px;flex-shrink:0;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></button>
+    </div>
     <div id="install-bar" class="install-bar hidden">
       <div>📲</div>
       <div class="ib-text"><div class="ib-title">Install Better Self</div><div class="ib-sub">Add to home screen for offline access</div></div>
@@ -438,6 +484,17 @@
     <div class="qa-grid" id="qa-grid"></div>
     <div class="section-label">Recent Workouts</div>
     <div class="recent-list" id="h-recent"></div>
+    <div style="height:8px;"></div>
+  </div>
+
+  <!-- PROGRAMS -->
+  <div class="page" id="page-programs">
+    <div class="ph"><div class="pt">TRAIN</div><div class="ps">Programs &amp; exercises</div></div>
+    <div style="padding:12px 18px 0;display:flex;gap:8px;">
+      <button class="btn-full" style="font-size:16px;padding:13px;flex:1;" onclick="goPage('exercises',{classList:{add:function(){},remove:function(){}}})">EXERCISE LIBRARY</button>
+    </div>
+    <div class="prog-tabs" id="prog-tabs"></div>
+    <div class="prog-list" id="prog-list"></div>
     <div style="height:8px;"></div>
   </div>
 
@@ -540,9 +597,9 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1z"/><polyline points="9 21 9 12 15 12 15 21"/></svg>
       <span>Home</span>
     </button>
-    <button class="nb" onclick="goPage('exercises',this)">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5h11M6.5 12h11M6.5 17.5h11"/><circle cx="3.5" cy="6.5" r="1"/><circle cx="3.5" cy="12" r="1"/><circle cx="3.5" cy="17.5" r="1"/></svg>
-      <span>Exercises</span>
+    <button class="nb" onclick="goPage('programs',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      <span>Train</span>
     </button>
     <button class="nb" onclick="goPage('log',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="14" x2="16" y2="14"/></svg>
@@ -555,10 +612,6 @@
     <button class="nb" onclick="goPage('meals',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>
       <span>Nutrition</span>
-    </button>
-    <button class="nb" onclick="goPage('settings',this)">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
-      <span>Settings</span>
     </button>
   </nav>
 
@@ -585,6 +638,17 @@
       <div class="set-logger" id="set-logger"></div>
       <div class="add-set-wrap"><button class="add-set" onclick="addSet()">+ Add Set</button></div>
       <div style="height:12px;"></div>
+    </div>
+  </div>
+
+  <!-- PROGRAM DETAIL MODAL -->
+  <div class="prog-detail-overlay" id="pd-overlay" onclick="if(event.target===this)closeProgDetail()">
+    <div class="prog-detail">
+      <div class="mhandle"></div>
+      <div style="display:flex;justify-content:flex-end;padding:12px 18px 0;"><button class="mclose" onclick="closeProgDetail()">✕</button></div>
+      <div class="pd-hero" id="pd-hero"></div>
+      <div class="pd-section" id="pd-schedule"></div>
+      <button class="pd-start-btn" id="pd-start-btn">START PROGRAM</button>
     </div>
   </div>
 
@@ -965,10 +1029,18 @@ function goPage(id,btn){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
-  btn.classList.add('active');
+  if(btn && btn.classList && btn.classList.add) btn.classList.add('active');
+  // For pages accessed via buttons (not nav), highlight parent nav
+  if(id==='exercises'||id==='programs'){
+    document.querySelectorAll('.nb').forEach(b=>{if(b.querySelector('span')&&b.querySelector('span').textContent==='Train')b.classList.add('active');});
+  }
+  if(id==='settings'){
+    // no nav highlight for settings
+  }
   if(id==='progress') drawCharts();
   if(id==='meals') renderMeals();
   if(id==='settings') renderSettings();
+  if(id==='programs') renderPrograms();
 }
 
 // ===== HOME =====
@@ -1135,6 +1207,130 @@ function drawBar(id,data,labels,color,h){
     ctx.fillText(labels[i],x+(bW-gap)/2,H);
   });
 }
+
+// ===== PROGRAMS =====
+const PROGRAMS = [
+  {id:'ppl', cat:'split', name:'Push / Pull / Legs', desc:'Classic 3-day split targeting each movement pattern. Great for intermediate lifters looking to add volume.',
+    badge:'6 WEEKS', ico:'🏋️', imgClass:'push', duration:'6 weeks', days:'6/week', time:'45-60 min',
+    schedule:[
+      {day:'Day 1 — Push', exercises:[
+        {name:'Barbell Bench Press',scheme:'4x8'},{name:'DB Overhead Press',scheme:'3x10'},{name:'Incline DB Press',scheme:'3x10'},
+        {name:'Cable Chest Fly',scheme:'3x12'},{name:'Lateral Raise',scheme:'3x15'},{name:'Overhead Tricep Ext',scheme:'3x12'}]},
+      {day:'Day 2 — Pull', exercises:[
+        {name:'Deadlift',scheme:'3x5'},{name:'Barbell Row',scheme:'4x8'},{name:'Pull Ups',scheme:'4x8'},
+        {name:'Cable Row',scheme:'3x12'},{name:'Barbell Curl',scheme:'3x12'},{name:'Hammer Curl',scheme:'3x12'}]},
+      {day:'Day 3 — Legs', exercises:[
+        {name:'Barbell Squat',scheme:'4x8'},{name:'Romanian Deadlift',scheme:'3x10'},{name:'Goblet Squat',scheme:'3x12'},
+        {name:'Calf Raise',scheme:'4x20'},{name:'Plank',scheme:'3x60s'}]},
+      {day:'Day 4 — Push B', exercises:[
+        {name:'DB Bench Press',scheme:'4x10'},{name:'Barbell OHP',scheme:'4x6'},{name:'Dips',scheme:'3x10'},
+        {name:'Lateral Raise',scheme:'4x15'},{name:'Tricep Pushdown',scheme:'3x12'}]},
+      {day:'Day 5 — Pull B', exercises:[
+        {name:'Barbell Row',scheme:'4x10'},{name:'Pull Ups',scheme:'4xAMRAP'},{name:'DB Row',scheme:'3x10'},
+        {name:'Band Pull Apart',scheme:'3x15'},{name:'DB Curl',scheme:'3x12'}]},
+      {day:'Day 6 — Legs B', exercises:[
+        {name:'Barbell Squat',scheme:'3x5 (heavy)'},{name:'KB Swing',scheme:'4x15'},{name:'Calf Raise',scheme:'4x20'},
+        {name:'Ab Wheel Rollout',scheme:'3x10'}]},
+      {day:'Day 7', rest:true}
+    ]},
+  {id:'strength', cat:'strength', name:'Starting Strength 5x5', desc:'Linear progression program for beginners. Add weight each session to build a solid foundation.',
+    badge:'ONGOING', ico:'💪', imgClass:'str', duration:'12+ weeks', days:'3/week', time:'45 min',
+    schedule:[
+      {day:'Workout A', exercises:[
+        {name:'Barbell Squat',scheme:'5x5'},{name:'Barbell Bench Press',scheme:'5x5'},{name:'Barbell Row',scheme:'5x5'}]},
+      {day:'Workout B', exercises:[
+        {name:'Barbell Squat',scheme:'5x5'},{name:'Barbell OHP',scheme:'5x5'},{name:'Deadlift',scheme:'1x5'}]},
+      {day:'Schedule', rest:false, note:'Alternate A/B across Mon-Wed-Fri. Add 2.5kg per session on upper body, 5kg on squats.'}
+    ]},
+  {id:'hiit7', cat:'hiit', name:'7-Minute HIIT', desc:'Science-backed high-intensity circuit. Maximum results in minimum time — perfect for busy days.',
+    badge:'7 MIN', ico:'⚡', imgClass:'hiit', duration:'Ongoing', days:'Daily', time:'7 min',
+    schedule:[
+      {day:'Circuit (30s work / 10s rest)', exercises:[
+        {name:'Push Ups',scheme:'30s'},{name:'Plank',scheme:'30s'},{name:'Goblet Squat',scheme:'30s'},
+        {name:'Calf Raise',scheme:'30s'},{name:'Push Ups',scheme:'30s'},{name:'Plank',scheme:'30s'},
+        {name:'KB Swing',scheme:'30s'}]}
+    ]},
+  {id:'hiit20', cat:'hiit', name:'20-Min Metabolic Blast', desc:'Four rounds of 5 exercises. Burns fat, builds muscle endurance. No equipment needed.',
+    badge:'20 MIN', ico:'🔥', imgClass:'hiit', duration:'Ongoing', days:'3-4/week', time:'20 min',
+    schedule:[
+      {day:'4 Rounds (40s work / 20s rest)', exercises:[
+        {name:'Push Ups',scheme:'40s'},{name:'Goblet Squat',scheme:'40s'},{name:'Plank',scheme:'40s'},
+        {name:'Calf Raise',scheme:'40s'},{name:'KB Swing',scheme:'40s'}]}
+    ]},
+  {id:'bw_beginner', cat:'bodyweight', name:'Bodyweight Basics', desc:'No equipment needed. Master the fundamentals with progressive bodyweight training.',
+    badge:'4 WEEKS', ico:'🧘', imgClass:'bw', duration:'4 weeks', days:'4/week', time:'30 min',
+    schedule:[
+      {day:'Day 1 — Upper', exercises:[
+        {name:'Push Ups',scheme:'4x10-15'},{name:'Inverted Row',scheme:'3x8-12'},{name:'Dips',scheme:'3x8'},
+        {name:'Plank',scheme:'3x45s'}]},
+      {day:'Day 2 — Lower', exercises:[
+        {name:'Goblet Squat',scheme:'4x15 (bodyweight)'},{name:'Calf Raise',scheme:'4x20'},{name:'Plank',scheme:'3x45s'}]},
+      {day:'Day 3 — Rest', rest:true},
+      {day:'Day 4 — Upper', exercises:[
+        {name:'Push Ups',scheme:'3x12-20'},{name:'Pull Ups',scheme:'3x5-8 or negatives'},{name:'Band Pull Apart',scheme:'3x15'}]},
+      {day:'Day 5 — Lower + Core', exercises:[
+        {name:'Goblet Squat',scheme:'3x20'},{name:'Calf Raise',scheme:'3x25'},{name:'Ab Wheel Rollout',scheme:'3x8'},
+        {name:'Plank',scheme:'3x60s'}]},
+      {day:'Days 6-7', rest:true}
+    ]},
+  {id:'full_body', cat:'full', name:'Full Body 3x/Week', desc:'Hit every major muscle group each session. Ideal for beginners or those with limited training days.',
+    badge:'ONGOING', ico:'⚡', imgClass:'full', duration:'Ongoing', days:'3/week', time:'45 min',
+    schedule:[
+      {day:'Each Session', exercises:[
+        {name:'Barbell Squat',scheme:'3x8'},{name:'Barbell Bench Press',scheme:'3x8'},{name:'Barbell Row',scheme:'3x8'},
+        {name:'Barbell OHP',scheme:'3x8'},{name:'Barbell Curl',scheme:'2x12'},{name:'Plank',scheme:'2x60s'}]},
+      {day:'Progression', note:'Add 2.5kg to each lift when you complete all sets and reps.', rest:false}
+    ]},
+];
+
+let progFilter = 'all';
+function renderPrograms(){
+  const cats = [{id:'all',name:'All'},{id:'split',name:'Splits'},{id:'strength',name:'Strength'},{id:'hiit',name:'HIIT'},{id:'bodyweight',name:'Bodyweight'},{id:'full',name:'Full Body'}];
+  document.getElementById('prog-tabs').innerHTML = cats.map(c=>
+    `<button class="prog-tab ${progFilter===c.id?'active':''}" onclick="progFilter='${c.id}';renderPrograms()">${c.name}</button>`).join('');
+  const filtered = progFilter==='all'?PROGRAMS:PROGRAMS.filter(p=>p.cat===progFilter);
+  document.getElementById('prog-list').innerHTML = filtered.map(p=>`
+    <div class="prog-card" onclick="openProgDetail('${p.id}')">
+      <div class="prog-card-img ${p.imgClass}">${p.ico}<div class="prog-card-badge">${p.badge}</div></div>
+      <div class="prog-card-body">
+        <div class="prog-card-title">${p.name}</div>
+        <div class="prog-card-desc">${p.desc}</div>
+        <div class="prog-card-meta">
+          <span>📅 ${p.duration}</span><span>🗓️ ${p.days}</span><span>⏱️ ${p.time}</span>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function openProgDetail(id){
+  const p = PROGRAMS.find(x=>x.id===id);
+  if(!p) return;
+  document.getElementById('pd-hero').innerHTML = `
+    <div class="pd-label">${p.cat.toUpperCase()} PROGRAM</div>
+    <div class="pd-title">${p.name}</div>
+    <div class="pd-desc">${p.desc}</div>
+    <div class="pd-stats">
+      <div class="pd-stat"><div class="pd-stat-val">${p.duration}</div><div class="pd-stat-lbl">Duration</div></div>
+      <div class="pd-stat"><div class="pd-stat-val">${p.days}</div><div class="pd-stat-lbl">Frequency</div></div>
+      <div class="pd-stat"><div class="pd-stat-val">${p.time}</div><div class="pd-stat-lbl">Per Session</div></div>
+    </div>`;
+  document.getElementById('pd-schedule').innerHTML = `
+    <div class="pd-section-title">Schedule</div>
+    ${p.schedule.map(d=>`
+      <div class="pd-day">
+        <div class="pd-day-title">${d.day} ${d.rest?'<span class="pd-day-rest">Rest Day</span>':''}</div>
+        ${d.note?`<div style="font-size:12px;color:var(--muted);line-height:1.5;">${d.note}</div>`:''}
+        ${d.exercises?d.exercises.map(e=>`
+          <div class="pd-ex-row"><span class="pd-ex-name">${e.name}</span><span class="pd-ex-scheme">${e.scheme}</span></div>`).join(''):''}
+      </div>`).join('')}`;
+  document.getElementById('pd-start-btn').onclick = ()=>{
+    closeProgDetail();
+    const firstDay = p.schedule.find(d=>d.exercises&&d.exercises.length);
+    if(firstDay) openWorkout(p.name + ' — ' + firstDay.day);
+  };
+  document.getElementById('pd-overlay').classList.add('open');
+}
+function closeProgDetail(){document.getElementById('pd-overlay').classList.remove('open');}
 
 // ===== MEALS =====
 function getMacros(){
@@ -1409,7 +1605,7 @@ function init(){
     renderOnboarding();
     document.getElementById('onboarding').classList.add('show');
   }
-  renderHome();renderExercises();renderLog();renderProgress();updateFab();
+  renderHome();renderExercises();renderLog();renderProgress();renderPrograms();updateFab();
 }
 init();
 </script>
