@@ -577,10 +577,14 @@
   <div class="page" id="page-meals">
     <div class="ph"><div class="pt">NUTRITION</div><div class="ps">Meal planner &amp; macro tracker</div></div>
     <div class="meal-macros">
-      <div class="macro-card"><div class="macro-val cal" id="m-cal">0</div><div class="macro-label">kcal</div></div>
-      <div class="macro-card"><div class="macro-val pro" id="m-pro">0g</div><div class="macro-label">Protein</div></div>
+      <div class="macro-card"><div class="macro-val cal" id="m-cal">0</div><div class="macro-label">kcal</div><div id="m-cal-goal" style="font-size:9px;color:var(--muted);margin-top:2px;"></div></div>
+      <div class="macro-card"><div class="macro-val pro" id="m-pro">0g</div><div class="macro-label">Protein</div><div id="m-pro-goal" style="font-size:9px;color:var(--muted);margin-top:2px;"></div></div>
       <div class="macro-card"><div class="macro-val carb" id="m-carb">0g</div><div class="macro-label">Carbs</div></div>
       <div class="macro-card"><div class="macro-val fat" id="m-fat">0g</div><div class="macro-label">Fat</div></div>
+    </div>
+    <div style="padding:4px 18px 0;">
+      <div class="progress-bar"><div class="progress-fill" id="cal-fill" style="width:0%;background:linear-gradient(90deg,var(--accent2),#f97316);"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:3px;"><span id="cal-remaining"></span><span id="cal-target"></span></div>
     </div>
     <div class="macro-bar-row" id="macro-bar"></div>
     <div class="section-label">Today's Meals</div>
@@ -942,6 +946,49 @@ const MEAL_TEMPLATES = [
   {name:'Lunch',     ico:'☀️', foods:[{name:'Chicken Breast (200g)',cal:220,p:46,c:0,f:4},{name:'Brown Rice (150g)',cal:170,p:4,c:36,f:1}]},
   {name:'Pre-Workout',ico:'⚡',foods:[{name:'Banana',cal:105,p:1,c:27,f:0},{name:'Greek Yogurt (200g)',cal:120,p:18,c:8,f:2}]},
   {name:'Dinner',    ico:'🌙', foods:[]},
+  {name:'Snacks',    ico:'🍎', foods:[]},
+];
+
+// ===== FOOD DATABASE =====
+const FOOD_DB = [
+  // Proteins
+  {name:'Chicken Breast (100g)',cal:165,p:31,c:0,f:3.6,cat:'protein'},
+  {name:'Chicken Thigh (100g)',cal:209,p:26,c:0,f:10.9,cat:'protein'},
+  {name:'Salmon (100g)',cal:208,p:20,c:0,f:13,cat:'protein'},
+  {name:'Tuna (canned, 100g)',cal:116,p:26,c:0,f:0.8,cat:'protein'},
+  {name:'Ground Beef 90% (100g)',cal:176,p:20,c:0,f:10,cat:'protein'},
+  {name:'Whole Eggs x1',cal:70,p:6,c:0.4,f:5,cat:'protein'},
+  {name:'Egg Whites x3',cal:51,p:11,c:0.7,f:0.2,cat:'protein'},
+  {name:'Tofu Firm (100g)',cal:76,p:8,c:1.9,f:4.8,cat:'protein'},
+  {name:'Greek Yogurt (200g)',cal:120,p:18,c:8,f:2,cat:'protein'},
+  {name:'Cottage Cheese (200g)',cal:196,p:24,c:6,f:8,cat:'protein'},
+  {name:'Whey Protein (scoop)',cal:120,p:24,c:3,f:1.5,cat:'protein'},
+  {name:'Turkey Breast (100g)',cal:104,p:24,c:0,f:0.7,cat:'protein'},
+  // Carbs
+  {name:'Brown Rice (150g cooked)',cal:170,p:4,c:36,f:1.3,cat:'carb'},
+  {name:'White Rice (150g cooked)',cal:195,p:3.5,c:44,f:0.3,cat:'carb'},
+  {name:'Oats (80g dry)',cal:296,p:10,c:54,f:6,cat:'carb'},
+  {name:'Sweet Potato (200g)',cal:172,p:3.2,c:40,f:0.2,cat:'carb'},
+  {name:'Banana',cal:105,p:1.3,c:27,f:0.4,cat:'carb'},
+  {name:'Apple',cal:95,p:0.5,c:25,f:0.3,cat:'carb'},
+  {name:'Whole Wheat Bread (2 slices)',cal:180,p:8,c:32,f:2,cat:'carb'},
+  {name:'Pasta (150g cooked)',cal:210,p:7,c:41,f:1.2,cat:'carb'},
+  {name:'Quinoa (150g cooked)',cal:180,p:6,c:32,f:2.8,cat:'carb'},
+  {name:'Blueberries (100g)',cal:57,p:0.7,c:14,f:0.3,cat:'carb'},
+  // Fats
+  {name:'Avocado (half)',cal:120,p:1.5,c:6,f:11,cat:'fat'},
+  {name:'Olive Oil (1 tbsp)',cal:119,p:0,c:0,f:13.5,cat:'fat'},
+  {name:'Peanut Butter (2 tbsp)',cal:188,p:7,c:6,f:16,cat:'fat'},
+  {name:'Almonds (30g)',cal:173,p:6,c:6,f:15,cat:'fat'},
+  {name:'Walnuts (30g)',cal:185,p:4.3,c:3.9,f:18.5,cat:'fat'},
+  {name:'Cheese Cheddar (30g)',cal:113,p:7,c:0.4,f:9.3,cat:'fat'},
+  // Meals
+  {name:'Protein Shake (whey+banana+milk)',cal:340,p:32,c:40,f:5,cat:'meal'},
+  {name:'PB&J Sandwich',cal:370,p:12,c:50,f:14,cat:'meal'},
+  {name:'Grilled Chicken Salad',cal:350,p:40,c:12,f:16,cat:'meal'},
+  {name:'Overnight Oats',cal:380,p:16,c:52,f:12,cat:'meal'},
+  {name:'Burrito Bowl',cal:520,p:35,c:55,f:18,cat:'meal'},
+  {name:'Stir Fry (chicken + rice)',cal:480,p:35,c:50,f:12,cat:'meal'},
 ];
 
 // ===== STATE =====
@@ -1142,7 +1189,8 @@ function renderHome(){
   document.getElementById('h-workouts').textContent=state.workouts;
   document.getElementById('h-tons').textContent=(state.sets*12*55/1000).toFixed(1);
   document.getElementById('h-steps').textContent=state.steps>=1000?(state.steps/1000).toFixed(1)+'k':state.steps;
-  document.getElementById('h-kcal').textContent=state.meals.reduce((a,m)=>a+m.foods.reduce((b,f)=>b+f.cal,0),0);
+  const todayCal=state.meals.reduce((a,m)=>a+m.foods.reduce((b,f)=>b+f.cal,0),0);
+  document.getElementById('h-kcal').textContent=todayCal>=1000?(todayCal/1000).toFixed(1)+'k':todayCal;
   renderSteps(); renderRecentHome(); renderQuickStart();
 }
 
@@ -1242,6 +1290,11 @@ function renderLog(){
           <div class="le-row"><strong>Duration</strong>${w.dur} min</div>
           <div class="le-row"><strong>Total Sets</strong>${w.sets}</div>
           <div class="le-row"><strong>Volume</strong>${(w.vol||0).toLocaleString()} kg</div>
+          ${(w.exercises||[]).map(ex=>`
+            <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);">
+              <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:4px;">${ex.name}</div>
+              ${ex.sets.map((s,si)=>`<div class="le-row" style="padding:2px 0;"><strong>Set ${si+1}</strong>${s.kg||'-'}kg × ${s.reps||'-'} ${s.done?'✓':''}</div>`).join('')}
+            </div>`).join('')}
         </div>
       </div>`).join('');
 }
@@ -1565,6 +1618,15 @@ function renderMeals(){
   document.getElementById('m-pro').textContent=t.p+'g';
   document.getElementById('m-carb').textContent=t.c+'g';
   document.getElementById('m-fat').textContent=t.f+'g';
+  // Calorie goal progress
+  const calGoal=state.calGoal||2500;
+  const proGoal=state.proGoal||180;
+  const calPct=Math.min(100,Math.round(t.cal/calGoal*100));
+  document.getElementById('cal-fill').style.width=calPct+'%';
+  document.getElementById('m-cal-goal').textContent=`/ ${calGoal}`;
+  document.getElementById('m-pro-goal').textContent=`/ ${proGoal}g`;
+  document.getElementById('cal-remaining').textContent=t.cal<calGoal?`${calGoal-t.cal} kcal remaining`:'Goal reached!';
+  document.getElementById('cal-target').textContent=`${calPct}%`;
   const mt=t.p*4+t.c*4+t.f*9||1;
   const pp=Math.round(t.p*4/mt*100),cp=Math.round(t.c*4/mt*100),fp=100-pp-cp;
   document.getElementById('macro-bar').innerHTML=`
@@ -1587,6 +1649,9 @@ function renderMeals(){
             </div>
           </div>`).join('')}
         <div class="add-food-row">
+          <input class="fi-input" id="fdb-search-${mi}" placeholder="Search food database..." oninput="searchFoodDB(${mi})" style="margin-bottom:6px;"/>
+          <div id="fdb-results-${mi}" style="max-height:150px;overflow-y:auto;margin-bottom:8px;"></div>
+          <div style="font-size:10px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.1em;font-weight:700;">Or add manually:</div>
           <div class="add-food-input-row">
             <input class="fi-input" id="fi-n-${mi}" placeholder="Food name" type="text"/>
             <input class="fi-input-sm" id="fi-c-${mi}" placeholder="kcal" type="number" inputmode="numeric"/>
@@ -1600,6 +1665,21 @@ function renderMeals(){
         </div>
       </div>
     </div>`).join('');
+}
+function searchFoodDB(mi){
+  const q=(document.getElementById('fdb-search-'+mi).value||'').toLowerCase().trim();
+  const el=document.getElementById('fdb-results-'+mi);
+  if(!q){el.innerHTML='';return;}
+  const results=FOOD_DB.filter(f=>f.name.toLowerCase().includes(q)).slice(0,8);
+  el.innerHTML=results.map(f=>`
+    <div onclick="addFoodFromDB(${mi},'${f.name.replace(/'/g,"\\'")}',${f.cal},${f.p},${f.c},${f.f})" style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--s2);cursor:pointer;">
+      <div><div style="font-size:13px;font-weight:500;">${f.name}</div><div style="font-size:10px;color:var(--muted);">${f.p}g P · ${f.c}g C · ${f.f}g F</div></div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;color:var(--accent2);font-weight:700;">${f.cal}</div>
+    </div>`).join('')||'<div style="font-size:12px;color:var(--muted);padding:8px 0;">No results. Add manually below.</div>';
+}
+function addFoodFromDB(mi,name,cal,p,c,f){
+  state.meals[mi].foods.push({name,cal,p,c,f});
+  save();renderMeals();document.getElementById('ms-'+mi).style.display='block';
 }
 function toggleMeal(i){const el=document.getElementById('ms-'+i);el.style.display=el.style.display==='block'?'none':'block';}
 function addFood(mi){
