@@ -1,7 +1,7 @@
 {
   "name": "Better Self",
   "short_name": "Better Self",
-  "description": "Strength training, nutrition & activity tracker for your home gym",
+  "description": "Strength training, nutrition & activity tracker",
   "start_url": "/better-self/",
   "scope": "/better-self/",
   "display": "standalone",
@@ -24,7 +24,7 @@
   ],
   "categories": ["health", "fitness"],
   "shortcuts": [
-    {"name": "Log Workout", "short_name": "Log", "url": "/?page=log", "description": "Log a new workout"},
-    {"name": "Nutrition", "short_name": "Meals", "url": "/?page=meals", "description": "Track today's meals"}
+    {"name": "Log Workout", "short_name": "Log", "url": "/better-self/?page=log"},
+    {"name": "Nutrition", "short_name": "Meals", "url": "/better-self/?page=meals"}
   ]
 }

@@ -1,6 +1,6 @@
-const CACHE = 'better-self-v2';
+const CACHE = 'better-self-v3';
 const BASE = '/better-self';
-const ASSETS = [BASE + '/', BASE + '/index.html', BASE + '/manifest.json', BASE + '/sw.js'];
+const ASSETS = [BASE+'/', BASE+'/index.html', BASE+'/manifest.json', BASE+'/sw.js'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
@@ -16,6 +16,6 @@ self.addEventListener('activate', e => {
 
 self.addEventListener('fetch', e => {
   e.respondWith(
-    caches.match(e.request).then(cached => cached || fetch(e.request).catch(() => caches.match(BASE + '/index.html')))
+    caches.match(e.request).then(cached => cached || fetch(e.request).catch(() => caches.match(BASE+'/index.html')))
   );
 });
