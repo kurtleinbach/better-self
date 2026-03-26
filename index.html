@@ -356,7 +356,13 @@
     .fb-export-btn{flex:1;padding:10px;background:var(--s2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:0.04em;cursor:pointer;}
     .fb-export-btn.primary{background:rgba(255,107,43,0.1);border-color:rgba(255,107,43,0.3);color:var(--accent);}
 
-    /* end styles */
+    /* Install banner */
+    .install-bar{margin:14px 18px 0;background:linear-gradient(135deg,rgba(255,107,43,0.15),rgba(255,107,43,0.08));border:2px solid rgba(255,107,43,0.5);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;}
+    .install-bar.hidden{display:none;}
+    .ib-text{flex:1;}
+    .ib-title{font-size:14px;font-weight:700;color:var(--text);}
+    .ib-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+    .ib-btn{padding:10px 18px;background:var(--accent);color:#fff;border:none;border-radius:9px;font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;cursor:pointer;flex-shrink:0;letter-spacing:0.04em;}
   </style>
 </head>
 <body>
@@ -383,6 +389,14 @@
   <!-- HOME -->
   <div class="page active" id="page-home">
     <div class="ph"><div class="pt">BETTER SELF</div><div class="ps" id="home-ps">Strength &amp; Health Tracker</div></div>
+    <div id="install-bar" class="install-bar hidden">
+      <div style="font-size:24px;">📲</div>
+      <div class="ib-text">
+        <div class="ib-title">Install Better Self</div>
+        <div class="ib-sub">Tap to add to your home screen &amp; use offline</div>
+      </div>
+      <button class="ib-btn" onclick="installApp()">INSTALL</button>
+    </div>
     <div class="hero">
       <div class="hero-label">Welcome back</div>
       <div class="hero-name" id="hero-name">ATHLETE</div>
@@ -1593,6 +1607,26 @@ function updateFab(){
 }
 
 // ===== PWA =====
+// ===== PWA INSTALL =====
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('install-bar').classList.remove('hidden');
+});
+function installApp(){
+  if(deferredPrompt){
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(result => {
+      deferredPrompt = null;
+      document.getElementById('install-bar').classList.add('hidden');
+    });
+  }
+}
+window.addEventListener('appinstalled', () => {
+  document.getElementById('install-bar').classList.add('hidden');
+});
+
 if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
 
 // Close food suggestions when tapping outside
