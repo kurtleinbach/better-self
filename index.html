@@ -306,8 +306,8 @@
     .add-set:active{background:var(--s2);}
 
     /* ACHIEVEMENT TOAST */
-    .achievement-toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-100px);background:linear-gradient(135deg,var(--s2),var(--s3));border:1px solid var(--accent2);border-radius:16px;padding:14px 20px;z-index:999;display:flex;align-items:center;gap:12px;min-width:260px;max-width:320px;box-shadow:0 8px 30px rgba(0,0,0,0.5);transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);}
-    .achievement-toast.show{transform:translateX(-50%) translateY(0);}
+    .achievement-toast{position:fixed;top:-120px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--s2),var(--s3));border:1px solid var(--accent2);border-radius:16px;padding:14px 20px;z-index:999;display:flex;align-items:center;gap:12px;min-width:260px;max-width:320px;box-shadow:0 8px 30px rgba(0,0,0,0.5);transition:top 0.4s cubic-bezier(0.34,1.56,0.64,1);}
+    .achievement-toast.show{top:20px;}
     .at-ico{font-size:28px;}
     .at-body{flex:1;}
     .at-label{font-size:10px;text-transform:uppercase;letter-spacing:0.12em;color:var(--accent2);font-weight:700;}
@@ -355,6 +355,36 @@
     .fb-export-row{display:flex;gap:8px;padding:0 18px 6px;flex-shrink:0;}
     .fb-export-btn{flex:1;padding:10px;background:var(--s2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:0.04em;cursor:pointer;}
     .fb-export-btn.primary{background:rgba(255,107,43,0.1);border-color:rgba(255,107,43,0.3);color:var(--accent);}
+
+    /* QUICK REPS */
+    .qr-card{margin:0 18px;background:var(--s1);border:1px solid var(--border);border-radius:16px;overflow:hidden;}
+    .qr-row{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--s2);}
+    .qr-row:last-child{border-bottom:none;}
+    .qr-ico{font-size:22px;flex-shrink:0;}
+    .qr-info{flex:1;}
+    .qr-name{font-size:13px;font-weight:700;}
+    .qr-count{font-size:11px;color:var(--muted);margin-top:2px;}
+    .qr-btn{padding:9px 14px;background:var(--s2);border:1px solid var(--border);border-radius:9px;color:var(--text);font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;}
+    .qr-btn:active{background:var(--s3);}
+
+    /* WATER */
+    .water-card{margin:0 18px;background:var(--s1);border:1px solid var(--border);border-radius:16px;padding:16px;}
+    .water-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+    .water-num{font-family:'Barlow Condensed',sans-serif;font-size:46px;font-weight:900;color:var(--blue);line-height:1;}
+    .water-goal-lbl{font-size:12px;color:var(--muted);margin-top:2px;}
+    .water-pct{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:700;color:var(--blue);}
+    .water-btn{width:100%;padding:9px;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.25);border-radius:9px;color:var(--blue);font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;cursor:pointer;margin-top:10px;}
+    .water-btn:active{background:rgba(59,130,246,0.2);}
+
+    /* PRE-WORKOUT SELECTOR */
+    .pre-workout-card{margin:14px 18px 0;background:var(--s1);border:1px solid var(--border);border-radius:16px;padding:14px 16px;}
+    .pre-workout-title{font-size:10px;text-transform:uppercase;letter-spacing:0.14em;color:var(--muted);font-weight:700;margin-bottom:10px;}
+    .pre-workout-row{display:flex;gap:8px;}
+    .pw-sel{flex:2;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:11px 12px;color:var(--text);font-family:'Syne',sans-serif;font-size:13px;-webkit-appearance:none;}
+    .pw-sel:focus{outline:none;border-color:var(--accent);}
+    .pw-weight{flex:1;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:11px 10px;color:var(--text);font-family:'Syne',sans-serif;font-size:13px;text-align:center;}
+    .pw-weight:focus{outline:none;border-color:var(--accent);}
+    .pw-weight::placeholder{color:var(--muted);}
 
     /* Install banner */
     .install-bar{margin:14px 18px 0;background:linear-gradient(135deg,rgba(255,107,43,0.15),rgba(255,107,43,0.08));border:2px solid rgba(255,107,43,0.5);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;}
@@ -435,6 +465,28 @@
       </div>
       <div id="step-counter-status"></div>
     </div>
+    <div class="section-label">Quick Reps</div>
+    <div class="qr-card">
+      <div class="qr-row">
+        <div class="qr-ico">🦵</div>
+        <div class="qr-info"><div class="qr-name">Bodyweight Squats</div><div class="qr-count" id="squat-count">0 sets today</div></div>
+        <button class="qr-btn" onclick="addQuickReps('squats')">+10 REPS</button>
+      </div>
+      <div class="qr-row">
+        <div class="qr-ico">👟</div>
+        <div class="qr-info"><div class="qr-name">Calf Raises</div><div class="qr-count" id="calf-count">0 sets today</div></div>
+        <button class="qr-btn" onclick="addQuickReps('calves')">+10 REPS</button>
+      </div>
+    </div>
+    <div class="section-label">Hydration</div>
+    <div class="water-card">
+      <div class="water-top">
+        <div><div class="water-num" id="water-oz">0</div><div class="water-goal-lbl" id="water-goal-lbl">Goal: 96 oz (8 glasses)</div></div>
+        <div class="water-pct" id="water-pct">0%</div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="water-fill" style="width:0%;background:linear-gradient(90deg,var(--blue),#60a5fa);"></div></div>
+      <button class="water-btn" onclick="addWater()">💧 +12 oz glass</button>
+    </div>
     <div class="section-label">Quick Start</div>
     <div class="qa-grid" id="qa-grid"></div>
     <div class="section-label">Recent Workouts</div>
@@ -459,7 +511,14 @@
   <!-- LOG -->
   <div class="page" id="page-log">
     <div class="ph"><div class="pt">ACTIVITY LOG</div><div class="ps">Your training history</div></div>
-    <div class="log-cta"><button class="btn-full" onclick="openWorkout('Custom Workout')">+ LOG WORKOUT</button></div>
+    <div class="pre-workout-card">
+      <div class="pre-workout-title">Exercise Setup</div>
+      <div class="pre-workout-row">
+        <select class="pw-sel" id="pw-ex-sel"><option value="">-- Select exercise (optional) --</option></select>
+        <input class="pw-weight" id="pw-weight" type="number" inputmode="decimal" placeholder="Weight (kg)"/>
+      </div>
+    </div>
+    <div class="log-cta"><button class="btn-full" onclick="openWorkoutFromLog()" style="margin-top:10px;">+ LOG WORKOUT</button></div>
     <div class="log-list" id="log-list"></div>
     <div style="height:8px;"></div>
   </div>
@@ -555,7 +614,7 @@
         <div class="settings-section-title">⚠️ Data</div>
         <button class="danger-btn" onclick="resetData()">RESET ALL DATA</button>
       </div>
-      <div class="settings-footer">Better Self v3.0 &bull; Built for your home gym</div>
+      <div class="settings-footer">Better Self v3.1 &bull; Built for your home gym</div>
     </div>
   </div>
 
@@ -851,9 +910,36 @@ let state = JSON.parse(localStorage.getItem('betterself3_state') || 'null')
     stepCounterEnabled:false,
     mealLogDays:0,
     feedback:[],
+    waterOz:0, waterDate:'', waterGoal:96,
+    squatSets:0, squatDate:'',
+    calfSets:0, calfDate:'',
   };
 
 function save(){localStorage.setItem('betterself3_state',JSON.stringify(state));}
+
+// ===== STATE MIGRATION =====
+function ensureStateFields(){
+  if(!('waterOz' in state)) state.waterOz=0;
+  if(!('waterDate' in state)) state.waterDate='';
+  if(!('waterGoal' in state)) state.waterGoal=96;
+  if(!('squatSets' in state)) state.squatSets=0;
+  if(!('squatDate' in state)) state.squatDate='';
+  if(!('calfSets' in state)) state.calfSets=0;
+  if(!('calfDate' in state)) state.calfDate='';
+}
+
+function getTodayStr(){
+  return new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+}
+
+function resetDailyIfNeeded(){
+  const today=getTodayStr();
+  let changed=false;
+  if(state.waterDate!==today){state.waterOz=0;state.waterDate=today;state.stepGoalHitToday=false;changed=true;}
+  if(state.squatDate!==today){state.squatSets=0;state.squatDate=today;changed=true;}
+  if(state.calfDate!==today){state.calfSets=0;state.calfDate=today;changed=true;}
+  if(changed) save();
+}
 
 // ===== XP & LEVELS =====
 const XP_PER_LEVEL = 500;
@@ -980,7 +1066,7 @@ function renderHome(){
   document.getElementById('h-steps').textContent = s>=1000?(s/1000).toFixed(1)+'k':s;
   document.getElementById('h-kcal').textContent = state.meals.reduce((a,m)=>a+m.foods.reduce((b,f)=>b+f.cal,0),0);
   renderSteps(); renderLevelCard(); renderRecentHome(); renderQuickStart();
-  renderStepCounterStatus();
+  renderStepCounterStatus(); renderWater(); renderQuickReps();
 }
 
 function renderSteps(){
@@ -1087,6 +1173,52 @@ function onDeviceMotion(e){
   lastAccelMag=mag;
 }
 
+// ===== WATER TRACKER =====
+function addWater(){
+  state.waterOz=(state.waterOz||0)+12;
+  save(); renderWater();
+}
+
+function renderWater(){
+  const oz=state.waterOz||0;
+  const goal=state.waterGoal||96;
+  const pct=Math.min(100,Math.round(oz/goal*100));
+  document.getElementById('water-oz').textContent=oz;
+  document.getElementById('water-pct').textContent=pct+'%';
+  document.getElementById('water-fill').style.width=pct+'%';
+  document.getElementById('water-goal-lbl').textContent='Goal: '+goal+' oz ('+(goal/12|0)+' glasses)';
+}
+
+// ===== QUICK REPS =====
+function addQuickReps(type){
+  const today=getTodayStr();
+  if(type==='squats'){
+    if(state.squatDate!==today){state.squatSets=0;state.squatDate=today;}
+    state.squatSets=(state.squatSets||0)+1;
+    if(!state.exerciseHistory['Bodyweight Squat']) state.exerciseHistory['Bodyweight Squat']=[];
+    state.exerciseHistory['Bodyweight Squat'].push({date:today,sets:[{weight:'BW',reps:'10',unit:''}]});
+    document.getElementById('squat-count').textContent=state.squatSets+' set'+(state.squatSets!==1?'s':'')+' today';
+    showToast('Squat set logged! 🦵','var(--green)');
+  } else {
+    if(state.calfDate!==today){state.calfSets=0;state.calfDate=today;}
+    state.calfSets=(state.calfSets||0)+1;
+    if(!state.exerciseHistory['Calf Raise']) state.exerciseHistory['Calf Raise']=[];
+    state.exerciseHistory['Calf Raise'].push({date:today,sets:[{weight:'BW',reps:'10',unit:''}]});
+    document.getElementById('calf-count').textContent=state.calfSets+' set'+(state.calfSets!==1?'s':'')+' today';
+    showToast('Calf raise set logged! 👟','var(--green)');
+  }
+  addXP(10,'Quick reps');
+  save();
+}
+
+function renderQuickReps(){
+  const today=getTodayStr();
+  const sq=state.squatDate===today?(state.squatSets||0):0;
+  const ca=state.calfDate===today?(state.calfSets||0):0;
+  document.getElementById('squat-count').textContent=sq+' set'+(sq!==1?'s':'')+' today';
+  document.getElementById('calf-count').textContent=ca+' set'+(ca!==1?'s':'')+' today';
+}
+
 // ===== EXERCISES =====
 let currentExFilter='all';
 function renderExercises(cat){
@@ -1118,6 +1250,7 @@ function filterEx(cat,btn){
 
 // ===== LOG =====
 function renderLog(){
+  populateLogPreSelector();
   const el=document.getElementById('log-list');
   if(!state.log||state.log.length===0){
     el.innerHTML='<div style="padding:4px 18px;font-size:13px;color:var(--muted);">No workouts logged yet.</div>';return;
@@ -1450,14 +1583,30 @@ function onExerciseSelect(){
   card.classList.add('show');
 }
 
-function openWorkout(name){
-  wName=name; selectedExercise='';
+function populateLogPreSelector(){
+  const avail=ALL_EXERCISES.filter(isAvailable);
+  const sel=document.getElementById('pw-ex-sel');
+  if(!sel) return;
+  const cur=sel.value;
+  sel.innerHTML='<option value="">-- Select exercise (optional) --</option>'+
+    avail.map(e=>`<option value="${e.name}" ${e.name===cur?'selected':''}>${e.name}</option>`).join('');
+}
+
+function openWorkoutFromLog(){
+  const ex=document.getElementById('pw-ex-sel').value;
+  const wt=document.getElementById('pw-weight').value;
+  openWorkout(ex||'Custom Workout',ex,wt);
+}
+
+function openWorkout(name,preExercise,preWeight){
+  wName=name; selectedExercise=preExercise||'';
   document.getElementById('m-title').textContent=name;
   populateExerciseSelector();
-  document.getElementById('ex-sel').value='';
-  document.getElementById('last-session-card').classList.remove('show');
+  const w=preWeight||'';
+  if(preExercise){document.getElementById('ex-sel').value=preExercise;onExerciseSelect();}
+  else{document.getElementById('ex-sel').value='';document.getElementById('last-session-card').classList.remove('show');}
   timerSecs=0;timerRunning=true;
-  sets=[{weight:'',reps:'',unit:'kg',done:false},{weight:'',reps:'',unit:'kg',done:false},{weight:'',reps:'',unit:'kg',done:false}];
+  sets=[{weight:w,reps:'',unit:'kg',done:false},{weight:w,reps:'',unit:'kg',done:false},{weight:w,reps:'',unit:'kg',done:false}];
   renderSets(); updateTimerDisp();
   clearInterval(timerInt);
   timerInt=setInterval(()=>{if(timerRunning){timerSecs++;updateTimerDisp();}},1000);
@@ -1636,6 +1785,8 @@ document.addEventListener('click',e=>{
 
 // ===== INIT =====
 function init(){
+  ensureStateFields();
+  resetDailyIfNeeded();
   if(!state.setupDone){
     renderOnboarding();
     document.getElementById('onboarding').classList.add('show');
