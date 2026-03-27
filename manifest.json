@@ -1,7 +1,7 @@
 {
   "name": "Better Self",
   "short_name": "Better Self",
-  "description": "Strength training, nutrition & activity tracker for your home gym",
+  "description": "Strength training, nutrition & activity tracker",
   "start_url": "/better-self/",
   "scope": "/better-self/",
   "display": "standalone",
@@ -10,21 +10,33 @@
   "orientation": "portrait",
   "icons": [
     {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='40' fill='%230d0d0d'/><text x='96' y='136' font-family='sans-serif' font-size='90' font-weight='900' text-anchor='middle' fill='%23ff6b2b'>BS</text></svg>",
+      "src": "icon-192.png",
       "sizes": "192x192",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='100' fill='%230d0d0d'/><text x='256' y='360' font-family='sans-serif' font-size='240' font-weight='900' text-anchor='middle' fill='%23ff6b2b'>BS</text></svg>",
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon-512.png",
       "sizes": "512x512",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
   "categories": ["health", "fitness"],
   "shortcuts": [
-    {"name": "Log Workout", "short_name": "Log", "url": "/?page=log", "description": "Log a new workout"},
-    {"name": "Nutrition", "short_name": "Meals", "url": "/?page=meals", "description": "Track today's meals"}
+    {"name": "Log Workout", "short_name": "Log", "url": "/better-self/?page=log"},
+    {"name": "Nutrition", "short_name": "Meals", "url": "/better-self/?page=meals"}
   ]
 }
