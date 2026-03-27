@@ -37,6 +37,8 @@
     /* HEADERS */
     .ph{padding:20px 18px 14px;position:sticky;top:0;background:rgba(13,13,13,0.94);backdrop-filter:blur(16px);z-index:10;border-bottom:1px solid var(--border);text-align:center;}
     .pt{font-family:'Barlow Condensed',sans-serif;font-size:38px;font-weight:900;letter-spacing:0.06em;line-height:1;}
+    .pt span{color:var(--accent);}
+    .ph-home .pt{text-shadow:0 0 30px rgba(255,107,43,0.5),0 0 70px rgba(255,107,43,0.2);}
     .ps{font-size:12px;color:var(--muted);margin-top:3px;}
     .section-label{font-size:10px;text-transform:uppercase;letter-spacing:0.14em;color:var(--muted);font-weight:700;padding:18px 18px 10px;}
 
@@ -45,7 +47,7 @@
     #onboarding.show{display:block;}
     .ob-hero{background:linear-gradient(145deg,#1a1208,#141414);border-bottom:1px solid #3a2510;padding:48px 24px 32px;text-align:center;position:relative;overflow:hidden;}
     .ob-hero::before{content:'';position:absolute;top:-80px;left:50%;transform:translateX(-50%);width:300px;height:300px;background:radial-gradient(circle,rgba(255,107,43,0.18) 0%,transparent 65%);border-radius:50%;pointer-events:none;}
-    .ob-logo{font-family:'Barlow Condensed',sans-serif;font-size:54px;font-weight:900;letter-spacing:0.04em;line-height:1;}
+    .ob-logo{font-family:'Barlow Condensed',sans-serif;font-size:54px;font-weight:900;letter-spacing:0.04em;line-height:1;text-shadow:0 0 30px rgba(255,107,43,0.5),0 0 70px rgba(255,107,43,0.2);}
     .ob-logo span{color:var(--accent);}
     .ob-tagline{font-size:14px;color:var(--muted);margin-top:8px;}
     .ob-body{padding:24px 18px 0;}
@@ -401,7 +403,7 @@
   <!-- ONBOARDING -->
   <div id="onboarding">
     <div class="ob-hero">
-      <div class="ob-logo">Better <span>Self</span></div>
+      <div class="ob-logo">BETTER <span>SELF</span></div>
       <div class="ob-tagline">Your personal strength &amp; wellness tracker</div>
     </div>
     <div class="ob-body">
@@ -418,7 +420,7 @@
 
   <!-- HOME -->
   <div class="page active" id="page-home">
-    <div class="ph"><div class="pt">BETTER SELF</div><div class="ps" id="home-ps">Strength &amp; Health Tracker</div></div>
+    <div class="ph ph-home"><div class="pt">BETTER <span>SELF</span></div><div class="ps" id="home-ps">Strength &amp; Health Tracker</div></div>
     <div id="install-bar" class="install-bar hidden">
       <div style="font-size:24px;">📲</div>
       <div class="ib-text">
@@ -1057,7 +1059,7 @@ function goPage(id,btn){
 
 // ===== HOME =====
 function renderHome(){
-  const name = (state.profile?.name||'Athlete').toUpperCase();
+  const name = state.profile?.name||'Athlete';
   document.getElementById('hero-name').textContent = name;
   document.getElementById('h-streak').textContent = state.streak||0;
   document.getElementById('h-workouts').textContent = state.workouts||0;
@@ -1529,7 +1531,7 @@ function saveName(){
   const n=document.getElementById('profile-name-input').value.trim();
   if(!n) return;
   state.profile={name:n}; save();
-  document.getElementById('hero-name').textContent=n.toUpperCase();
+  document.getElementById('hero-name').textContent=n;
   showToast('Name saved!');
 }
 
