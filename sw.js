@@ -1,4 +1,4 @@
-const CACHE = 'better-self-v4';
+const CACHE = 'better-self-v5';
 const BASE = '/better-self';
 const ASSETS = [BASE+'/', BASE+'/index.html', BASE+'/manifest.json', BASE+'/sw.js', BASE+'/icon-192.png', BASE+'/icon-512.png'];
 
