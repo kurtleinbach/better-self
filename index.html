@@ -1,3 +1,63 @@
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn=event.target;
+    const orig=btn.textContent;
+    btn.textContent='✓ Copied!';
+    btn.style.cssText='flex:1;padding:10px;background:rgba(34,197,94,0.15);border:1px solid var(--green);border-radius:10px;color:var(--green);font-family:Barlow Condensed,sans-serif;font-size:14px;font-weight:700;cursor:pointer;';
+    setTimeout(()=>{btn.textContent=orig;btn.style.cssText='';renderFeedbackList();},2500);
+  }).catch(()=>prompt('Copy this and paste into Claude:',text));
+}
+function clearAllFeedback(){if(confirm('Clear all notes?')){state.feedback=[];save();renderFeedbackList();updateFab();}}
+function updateFab(){
+  const fab=document.getElementById('feedback-fab');
+  const count=(state.feedback||[]).length;
+  fab.classList.toggle('has-notes',count>0);
+}
+
+// ===== PWA =====
+// ===== PWA INSTALL =====
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('install-bar').classList.remove('hidden');
+});
+function installApp(){
+  if(deferredPrompt){
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(result => {
+      deferredPrompt = null;
+      document.getElementById('install-bar').classList.add('hidden');
+    });
+  }
+}
+window.addEventListener('appinstalled', () => {
+  document.getElementById('install-bar').classList.add('hidden');
+});
+
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
+
+// Close food suggestions when tapping outside
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.food-search-wrap')) document.querySelectorAll('.food-suggestions').forEach(el=>el.classList.remove('show'));
+});
+
+// ===== INIT =====
+function init(){
+  ensureStateFields();
+  resetDailyIfNeeded();
+  if(!state.setupDone){
+    renderOnboarding();
+    document.getElementById('onboarding').classList.add('show');
+  }
+  renderHome();renderExercises();renderLog();renderProgress();renderPrograms();updateFab();
+  if(state.stepCounterEnabled) startStepCounter();
+  renderHome(); renderExercises(); renderLog(); renderProgress(); updateFab();
+  checkBadges();
+}
+init();
+</script>
+</body>
+</html>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1741,7 +1801,6 @@ ${lines}
 
 ---
 Please update the Better Self app with the above changes. Migrate localStorage key betterself3_state to the new version so no data is lost.
-=================================`;
   navigator.clipboard.writeText(text).then(()=>{
     const btn=event.target;
     const orig=btn.textContent;
